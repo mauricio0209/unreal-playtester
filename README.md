@@ -50,3 +50,8 @@ number of seconds per action, so model latency never affects the results.
 ```bash
 cp .env.example .env   # then fill in your keys
 ```
+
+## Repository layout
+
+- `agent/`: Python agent, verifier and report (coming next).
+- `unreal/PlaytestArena/`: UE 5.8 project with the greybox level, seeded bugs and `BP_TestHarness`.
