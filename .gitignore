@@ -1,0 +1,12 @@
+# secrets
+.env
+# python
+__pycache__/
+.venv/
+# run outputs
+runs/
+# unreal (if the UE project lands here)
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
