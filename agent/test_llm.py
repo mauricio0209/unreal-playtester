@@ -275,7 +275,7 @@ def t_from_env_file():
             custom = llm.from_env("meta", env_path=path, model="custom-id")
             assert custom.model == "custom-id", custom.model
             base = llm.from_env("baseten", env_path=path)
-            assert base.auth == "Api-Key", base.auth
+            assert base.auth == "Bearer", base.auth  # as in Baseten's hackathon instructions
             assert base.base_url == "https://inference.baseten.co/v1"
             assert base.api_key == "baseten-key-456"
         finally:

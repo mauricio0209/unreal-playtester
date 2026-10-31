@@ -15,7 +15,7 @@ PROVIDERS = {
              "price_in": 1.25, "price_out": 4.25},
     "baseten": {"base_url": "https://inference.baseten.co/v1",
                 "key_env": "BASETEN_API_KEY",
-                "auth": "Api-Key", "model": "meta-models/muse-spark-open-1026",
+                "auth": "Bearer", "model": "meta-models/muse-spark-open-1026",
                 "price_in": 1.25, "price_out": 4.25},
 }  # prices are USD per million tokens
 
