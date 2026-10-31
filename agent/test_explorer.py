@@ -187,6 +187,33 @@ def t_walk_to_expands_into_replayable_steps():
     assert out["actions"] == 4, out  # 3 executed + the reset after filing
 
 
+def t_model_written_fall_rule_probes_the_area_and_sweeps():
+    spec = {"invariants": [{"id": "never_die", "description": "d", "predicate": "dsl",
+                            "params": {"expr": {"ever": {"==": [{"var": "PawnAlive"}, False]}}}}],
+            "intentional": []}
+
+    class Walls(FakeUE):  # the pawn reaches 300 cm in any direction, then a wall stops it
+        def move_to(self, x, y):
+            super().move_to(x, y)
+            self.to = (max(-300, min(300, x)), max(-300, min(300, y)))
+
+        def step(self, seconds):
+            self.calls.append(("step", seconds))
+            s = state()
+            s["PlayerLocation"].update(X=self.to[0], Y=self.to[1])
+            return s
+
+    logs = []
+    with tempfile.TemporaryDirectory() as tmp:
+        ue = Walls(tmp)
+        explorer.explore(ue, FakeLLM([]), spec, Path(tmp) / "shots", max_turns=1, log=logs.append)
+    assert any("probed walkable area: {'min': {'X': -300, 'Y': -300}, 'max': {'X': 300, 'Y': 300}}"
+               in l for l in logs), logs
+    lanes = [l for l in logs if l.startswith("sweep lane")]
+    assert [l.split(":")[0] for l in lanes] == ["sweep lane y=-300", "sweep lane y=0",
+                                                "sweep lane y=300"], lanes
+
+
 def t_sweep_hands_falls_to_model():
     spec = {"level": {"walkable_area": {"min": {"X": -100, "Y": -300}, "max": {"X": 1100, "Y": 300}}},
             "invariants": [{"id": "no_fall", "description": "d", "predicate": "fell_out_of_world",

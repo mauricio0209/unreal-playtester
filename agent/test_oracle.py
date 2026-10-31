@@ -198,6 +198,21 @@ def t_uncovered_objects_trigger_one_review():
         raise AssertionError("one check over three objects must fail")
 
 
+def t_rule_sentences_and_one_review():
+    doc = ("# Notes\nThe gate opens with a key. Torches light the hall.\n\n"
+           "- a coin is worth 1,\n- the floor must never break.\n")
+    assert oracle.rule_sentences(doc) == ["- a coin is worth 1,", "the floor must never break."], \
+        oracle.rule_sentences(doc)
+    state = {"ActorStates": {"Coin": "present"}, "PawnAlive": True}
+    coin = check("coin_worth", {"ever": {"==": [{"var": "ActorStates.Coin"}, "gone"]}})
+    floor = check("floor_holds", {"ever": {"==": [{"var": "PawnAlive"}, False]}})
+    llm = FakeLLM([json.dumps(coin), json.dumps(coin) + "\n" + json.dumps(floor)])
+    out = oracle.write_checks(llm, doc, state, log=lambda *_: None)
+    assert [c["id"] for c in out] == ["coin_worth", "floor_holds"], out
+    review = llm.seen[1][-1]["content"]
+    assert "2. the floor must never break." in review and "Torches" not in review, review
+
+
 def main():
     tests = sorted((n, f) for n, f in globals().items() if n.startswith("t_"))
     for name, fn in tests:

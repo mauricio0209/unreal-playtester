@@ -4,7 +4,17 @@ Standard library only.
 """
 
 import json
+import re
 from pathlib import Path
+
+# Words that mark a sentence of a design document as a rule; no LLM decides what is a rule.
+NORMATIVE = re.compile(r"\b(must|never|only|always|worth|cannot|does nothing|intended)\b", re.I)
+
+
+def rule_sentences(design_text):
+    """The design document's sentences that state a rule, split on sentence ends and bullets."""
+    parts = re.split(r"(?<=[.!?])\s+|\n\s*[-*]\s+|\n{2,}", design_text)
+    return [" ".join(p.split()) for p in parts if NORMATIVE.search(p)]
 
 
 def _system_prompt() -> str:
@@ -128,6 +138,8 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
     """Ask the model for checks, retrying rejected ones. See tasks/oracle.md."""
     coverage = validate is None  # production only: test doubles use placeholder checks
     objects = sorted((state or {}).get("ActorStates") or {})
+    rules = rule_sentences(design_text) if coverage else []
+    reviewed = False
     if validate is None:
         import checks
 
@@ -171,7 +183,19 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
                      if coverage and new_valid
                      and not any(o in json.dumps(c["violation"]) for c in new_valid)]
         if not parse_failed and not rejected and new_valid and not uncovered:
-            return best
+            if reviewed or not rules or i + 1 >= attempts:
+                return best
+            # One review against the document's rule sentences: a rule with no check can never
+            # be reported, however well the level is explored.
+            reviewed = True
+            log(f"  reviewing against {len(rules)} rule sentences")
+            numbered = "\n".join(f"{n}. {r}" for n, r in enumerate(rules, 1))
+            messages.append({"role": "user", "content": (
+                "Before the list is used, check it against every rule sentence of the design "
+                f"document:\n{numbered}\nAdd a check for any rule that no check enforces (both "
+                "sides where it has two). Reply with the complete list, one check per line as a "
+                "complete JSON object, and nothing else.")})
+            continue
         if i + 1 >= attempts:
             break
         if parse_failed:

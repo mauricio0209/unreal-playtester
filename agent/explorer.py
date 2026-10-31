@@ -172,15 +172,39 @@ def _holding(trace, spec):
     return held
 
 
-def sweep_lanes(spec, spacing=200, margin=100, chunk_s=2.0, speed=600):
+FALL_FIELDS = ("PawnAlive", "LastZ", "KillZ")
+
+
+def has_fall_rule(spec):
+    """True if an invariant is about falling: the hand-written predicate or a model-written
+    check that reads the pawn's life or height."""
+    return any(inv.get("predicate") == "fell_out_of_world"
+               or (inv.get("predicate") == "dsl"
+                   and any(f in json.dumps(inv.get("params", {})) for f in FALL_FIELDS))
+               for inv in spec.get("invariants", []))
+
+
+def probe_area(ue, reach=100000):
+    """Measure the walkable area without a map: walk as far as possible in each direction
+    from the start, from a fresh load each time, and return the box the walls allow."""
+    xs, ys = [], []
+    for dx, dy in ((reach, 0), (-reach, 0), (0, reach), (0, -reach)):
+        start = ue.reset()["PlayerLocation"]
+        _, state = _walk_to(ue, {"x": start["X"] + dx, "y": start["Y"] + dy})[-1]
+        xs.append(state["PlayerLocation"]["X"])
+        ys.append(state["PlayerLocation"]["Y"])
+    return {"min": {"X": min(xs), "Y": min(ys)}, "max": {"X": max(xs), "Y": max(ys)}}
+
+
+def sweep_lanes(spec, area=None, spacing=200, margin=100, chunk_s=2.0, speed=600):
     """Scripted coverage: one straight lane along X per Y row of the walkable area.
 
     Lanes are cheap and exhaustive; the model only judges what they turn up. Returns
-    (lanes, fall params), or ([], None) when the spec has no walkable area or no fall invariant."""
-    area = (spec.get("level") or {}).get("walkable_area")
+    (lanes, fall params), or ([], None) when there is no walkable area or no fall invariant."""
+    area = area or (spec.get("level") or {}).get("walkable_area")
     fall = next((i for i in spec.get("invariants", []) if i.get("predicate") == "fell_out_of_world"),
-                None)
-    if not area or not fall:
+                {"params": {"below_z": -200}})  # model-written fall checks use the 2 m rule too
+    if not area or not has_fall_rule(spec):
         return [], None
     x0, x1 = area["min"]["X"] + margin, area["max"]["X"] - margin
     ys = range(int(area["min"]["Y"] + margin), int(area["max"]["Y"] - margin) + 1, spacing)
@@ -205,7 +229,14 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
     known = set(state["ActorStates"])
     before = _shot(ue, shots_dir, "t000")
     note = "Fresh level load."
-    lanes, fall_params = sweep_lanes(spec)
+    area = None
+    if has_fall_rule(spec) and not (spec.get("level") or {}).get("walkable_area"):
+        area = probe_area(ue)
+        log(f"probed walkable area: {area}")
+    # shortcut: probed lanes are 300 cm apart (holes narrower than that can slip between
+    # lanes) to keep the sweep near 1.5 min; use spec.json's walkable_area for 200 cm lanes
+    lanes, fall_params = (sweep_lanes(spec, area, spacing=300, margin=0) if area
+                          else sweep_lanes(spec))
     ids = [inv["id"] for inv in spec["invariants"]]
     tested = dict.fromkeys(ids, 0)  # attempts per invariant, as the model declared them
 
