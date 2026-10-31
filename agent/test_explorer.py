@@ -53,7 +53,7 @@ class FakeLLM:
 
     def chat(self, messages):
         self.seen.append(messages)
-        return self.replies.pop(0) if self.replies else '{"action": {"type": "step", "seconds": 1}}'
+        return self.replies.pop(0) if self.replies else '{"testing": "door_opens", "action": {"type": "step", "seconds": 1}}'
 
 
 def run(replies, turns, die=False):
@@ -65,11 +65,11 @@ def run(replies, turns, die=False):
 
 def t_bug_repro_is_executed_actions():
     out, ue, _ = run([
-        '{"thought": "go", "action": {"type": "move_to", "x": 3440, "y": 0}}',
-        'Sure! {"action": {"type": "step", "seconds": 30}}',  # prose around JSON, clamped seconds
-        '{"action": {"type": "interact"}}',
-        '{"action": {"type": "step", "seconds": 1}}',
-        '{"action": {"type": "jump"}}',  # never stepped: dropped from the repro
+        '{"thought": "go", "testing": "door_opens", "action": {"type": "move_to", "x": 3440, "y": 0}}',
+        'Sure! {"testing": "door_opens", "action": {"type": "step", "seconds": 30}}',  # prose around JSON, clamped seconds
+        '{"testing": "door_opens", "action": {"type": "interact"}}',
+        '{"testing": "door_opens", "action": {"type": "step", "seconds": 1}}',
+        '{"testing": "door_opens", "action": {"type": "jump"}}',  # never stepped: dropped from the repro
         '{"bug": {"invariant": "door_opens", "title": "Door stuck", "hypothesis": "h"}}',
     ], turns=6)
     [h] = out["hypotheses"]
@@ -85,7 +85,7 @@ def t_bug_repro_is_executed_actions():
 def t_invalid_replies_are_fed_back_not_executed():
     out, ue, llm = run([
         "no json here",
-        '{"action": {"type": "teleport"}}',
+        '{"testing": "door_opens", "action": {"type": "teleport"}}',
         '{"bug": {"invariant": "door_opens", "title": "t", "hypothesis": "h"}}',  # no step yet
         '{"bug": {"invariant": "made_up", "title": "t", "hypothesis": "h"}}',
     ], turns=4)
@@ -97,10 +97,10 @@ def t_invalid_replies_are_fed_back_not_executed():
 
 def t_dead_pawn_only_allows_bug_or_reset():
     out, ue, _ = run([
-        '{"action": {"type": "move_to", "x": 1, "y": 1}}',
-        '{"action": {"type": "step", "seconds": 1}}',
-        '{"action": {"type": "move_to", "x": 2, "y": 2}}',  # rejected: pawn is gone
-        '{"action": {"type": "reset"}}',
+        '{"testing": "door_opens", "action": {"type": "move_to", "x": 1, "y": 1}}',
+        '{"testing": "door_opens", "action": {"type": "step", "seconds": 1}}',
+        '{"testing": "door_opens", "action": {"type": "move_to", "x": 2, "y": 2}}',  # rejected: pawn is gone
+        '{"testing": "door_opens", "action": {"type": "reset"}}',
     ], turns=4, die=True)
     assert ("move_to", 2, 2) not in ue.calls
     assert ue.calls.count("reset") == 2
@@ -108,11 +108,11 @@ def t_dead_pawn_only_allows_bug_or_reset():
 
 def t_action_batches_and_filed_memory():
     out, ue, llm = run([
-        '{"actions": [{"type": "move_to", "x": 3440, "y": 0}, {"type": "step", "seconds": 6},'
+        '{"testing": "door_opens", "actions": [{"type": "move_to", "x": 3440, "y": 0}, {"type": "step", "seconds": 6},'
         ' {"type": "interact"}, {"type": "step", "seconds": 1}]}',
         '{"bug": {"invariant": "door_opens", "title": "Door stuck", "hypothesis": "h"}}',
-        '{"actions": [{"type": "move_to", "x": 1, "y": 1}, {"type": "reset"}]}',  # reset not alone
-        '{"actions": []}',
+        '{"testing": "door_opens", "actions": [{"type": "move_to", "x": 1, "y": 1}, {"type": "reset"}]}',  # reset not alone
+        '{"testing": "door_opens", "actions": []}',
     ], turns=4)
     [h] = out["hypotheses"]
     assert [s["action"] for s in h["steps"]] == ["move_to", "step", "interact", "step"]
@@ -145,8 +145,8 @@ def t_done_ends_and_holding_checks_are_hinted_once():
                             "params": {"expr": False}}], "intentional": []}
     with tempfile.TemporaryDirectory() as tmp:
         ue = FakeUE(tmp)
-        llm = FakeLLM(['{"actions": [{"type": "move_to", "x": 500, "y": 0}, {"type": "step", "seconds": 1}]}',
-                       '{"actions": [{"type": "step", "seconds": 1}]}',
+        llm = FakeLLM(['{"testing": "moved_east", "actions": [{"type": "move_to", "x": 500, "y": 0}, {"type": "step", "seconds": 1}]}',
+                       '{"testing": "never", "actions": [{"type": "step", "seconds": 1}]}',
                        '{"thought": "all tested", "done": "both invariants"}',
                        '{"actions": [{"type": "step", "seconds": 1}]}'])
         explorer.explore(ue, llm, spec, Path(tmp) / "shots", max_turns=10, log=lambda *_: None)
@@ -156,9 +156,28 @@ def t_done_ends_and_holding_checks_are_hinted_once():
     assert "Automatic check" not in texts[2], texts[2]  # hinted once per attempt
 
 
+def t_done_refused_until_every_invariant_was_tested_and_testing_required():
+    one = {"invariants": SPEC["invariants"][:1], "intentional": []}
+    with tempfile.TemporaryDirectory() as tmp:
+        llm = FakeLLM([
+        '{"done": "nothing to do"}',  # door_opens never tested
+        '{"actions": [{"type": "step", "seconds": 1}]}',  # no "testing"
+        '{"testing": "door_opens", "actions": [{"type": "step", "seconds": 1}]}',
+        '{"done": "tested door_opens"}',
+        '{"testing": "door_opens", "actions": [{"type": "step", "seconds": 1}]}',
+        ])
+        explorer.explore(FakeUE(tmp), llm, one, Path(tmp) / "shots", max_turns=6,
+                         log=lambda *_: None)
+    texts = [m[1]["content"][0]["text"] for m in llm.seen]
+    assert len(texts) == 4, texts  # the accepted "done" ended the session
+    assert "not done: never tested door_opens" in texts[1], texts[1]
+    assert "'testing' must name" in texts[2], texts[2]
+    assert "Attempts per invariant: door_opens x1; never tested: none" in texts[3], texts[3]
+
+
 def t_walk_to_expands_into_replayable_steps():
     out, ue, _ = run([
-        '{"actions": [{"type": "walk_to", "x": 2000, "y": 0}]}',  # fake pawn stops at x=500
+        '{"testing": "door_opens", "actions": [{"type": "walk_to", "x": 2000, "y": 0}]}',  # fake pawn stops at x=500
         '{"bug": {"invariant": "door_opens", "title": "t", "hypothesis": "h"}}',
     ], turns=2)
     [h] = out["hypotheses"]

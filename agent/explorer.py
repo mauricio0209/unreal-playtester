@@ -19,9 +19,9 @@ bugs: places where the game breaks one of the invariants in the spec below.
 Each turn you get a screenshot of what the player sees, the game state as JSON and your recent \
 history. Reply with exactly ONE JSON object and nothing else, in one of these shapes:
 
-{"thought": "<one short sentence>", "actions": [<action>, ...]}
+{"thought": "<one short sentence>", "testing": "<invariant id>", "actions": [<action>, ...]}
 {"thought": "<one short sentence>", "bug": {"invariant": "<invariant id>", "title": "<short title>", "hypothesis": "<what you observed and why it breaks the invariant>"}}
-{"thought": "<one short sentence>", "done": "<what you tested>"}  end the session: only once every invariant has been tested
+{"thought": "<one short sentence>", "done": "<what you tested>"}  end the session: refused while an invariant was never tested
 
 "actions" holds 1 to 4 actions executed in order, e.g. a move_to followed by a step. A reset must be alone.
 
@@ -52,6 +52,9 @@ something else). Try both what should work and what should not. When every invar
 explore what straight lanes could miss.
 - After every turn the invariants are also checked automatically on the current attempt. When \
 one holds you are told: confirm it with your own observation and file it, or say why not.
+- "testing" names the invariant your actions are testing. Each turn you see how many attempts \
+went to each invariant and which were never tested: test the untested ones before repeating one \
+that already behaved correctly.
 - Bugs you already filed are listed each turn. Never file the same invariant twice: spend your \
 remaining turns finding different bugs.
 - If PawnAlive is false the player is gone: file a bug if it is one, otherwise reset.
@@ -196,11 +199,18 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
     hypotheses, history, episode, filed = [], [], [], []
     actions = 0
     state = ue.reset()
-    trace, hinted = [{"action": None, "state": state}], set()
+    trace, hinted, attempt_tested = [{"action": None, "state": state}], set(), set()
     known = set(state["ActorStates"])
     before = _shot(ue, shots_dir, "t000")
     note = "Fresh level load."
     lanes, fall_params = sweep_lanes(spec)
+    ids = [inv["id"] for inv in spec["invariants"]]
+    tested = dict.fromkeys(ids, 0)  # attempts per invariant, as the model declared them
+
+    def count_attempt(invariant):
+        if invariant not in attempt_tested:
+            attempt_tested.add(invariant)
+            tested[invariant] += 1
 
     def fell(s):  # any fall, intentional or not: judging it is the model's job
         return verifier.fell_out_of_world([{"state": s}], fall_params, {})
@@ -209,7 +219,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
         while lanes and not fell(state) and time.monotonic() - started <= deadline_s:
             lane = lanes.pop(0)
             state, episode = ue.reset(), []
-            trace, hinted = [{"action": None, "state": state}], set()
+            trace, hinted, attempt_tested = [{"action": None, "state": state}], set(), set()
             known = set(state["ActorStates"])
             before = _shot(ue, shots_dir, f"t{turn:03d}_lane{len(lanes)}")
             for step in lane:
@@ -227,7 +237,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                         "this breaks an invariant, otherwise reset.")
             elif not lanes:  # sweep done: object repros must not carry a lane's steps
                 state, episode = ue.reset(), []
-                trace, hinted = [{"action": None, "state": state}], set()
+                trace, hinted, attempt_tested = [{"action": None, "state": state}], set(), set()
                 known = set(state["ActorStates"])
                 before = _shot(ue, shots_dir, f"t{turn:03d}_swept")
                 note = "Scripted sweep finished. Level was reset."
@@ -239,6 +249,8 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                 f"Recent history:\n" + ("\n".join(history[-12:]) or "(none)") +
                 f"\nActions since last reset: {len(episode)}\n"
                 f"Bugs already filed: {', '.join(filed) or 'none'}\n"
+                f"Attempts per invariant: {', '.join(f'{i} x{n}' for i, n in tested.items() if n) or 'none'}"
+                f"; never tested: {', '.join(i for i, n in tested.items() if not n) or 'none'}\n"
                 f"State: {json.dumps(_brief(state, known))}")
         text = llm.chat([{"role": "system", "content": system},
                          {"role": "user", "content": [{"type": "text", "text": user},
@@ -246,6 +258,9 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
         try:
             reply = parse_reply(text)
             if "done" in reply:
+                untested = [i for i, n in tested.items() if not n]
+                if untested:
+                    raise ValueError(f"not done: never tested {', '.join(untested)}")
                 log(f"turn {turn}: done: {str(reply['done'])[:120]}")
                 break
             if "bug" in reply:
@@ -261,6 +276,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                                    "invariant": bug["invariant"],
                                    "steps": episode[:steps_done[-1] + 1],
                                    "before": before, "after": shot})
+                count_attempt(bug["invariant"])
                 filed.append(f"{bug['invariant']} ({bug.get('title')})")
                 log(f"turn {turn}: BUG {bug['invariant']}: {bug.get('title')}")
                 history.append(f"t{turn}: filed bug '{bug.get('title')}' -> level reset")
@@ -271,6 +287,10 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                     raise ValueError("a reset must be the only action in its turn")
                 if steps != [None] and not state["PawnAlive"]:
                     raise ValueError("the player is gone: file a bug or reset")
+                if steps != [None]:
+                    if reply.get("testing") not in tested:
+                        raise ValueError("'testing' must name the invariant id these actions test")
+                    count_attempt(reply["testing"])
         except (ValueError, KeyError, TypeError) as e:  # json.JSONDecodeError is a ValueError
             note = f"Your last reply was rejected: {e}. Reply with one valid JSON object."
             history.append(f"t{turn}: invalid reply ({e})")
@@ -283,7 +303,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
             break
         if steps == [None]:  # bug filed or explicit reset: start a fresh episode
             state, episode = ue.reset(), []
-            trace, hinted = [{"action": None, "state": state}], set()
+            trace, hinted, attempt_tested = [{"action": None, "state": state}], set(), set()
             known = set(state["ActorStates"])
             before = _shot(ue, shots_dir, f"t{turn:03d}_reset")
             note = "Level was reset."
