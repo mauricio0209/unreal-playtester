@@ -1,0 +1,629 @@
+[
+  {
+    "id": "side_door_opens_empty",
+    "description": "Standing next to the side door and interacting with empty pockets opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.SideDoor"
+                },
+                "closed"
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.SideDoor"
+                  ]
+                },
+                150
+              ]
+            },
+            {
+              "==": [
+                {
+                  "var": "InventoryCount"
+                },
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.SideDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "side_door_opens_loaded",
+    "description": "Standing next to the side door and interacting with items in pockets opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.SideDoor"
+                },
+                "closed"
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.SideDoor"
+                  ]
+                },
+                150
+              ]
+            },
+            {
+              ">": [
+                {
+                  "var": "InventoryCount"
+                },
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.SideDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_opens_with_coin",
+    "description": "Interacting with the exit door up close while carrying the gold coin opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.ExitDoor"
+                },
+                "closed"
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.ExitDoor"
+                  ]
+                },
+                150
+              ]
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GoldCoin"
+                },
+                null
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.ExitDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_locked_without_coin",
+    "description": "The exit door stays closed until the gold coin is picked up.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.ExitDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "exit_door_interact_without_coin_does_nothing",
+    "description": "Interacting with the exit door without the gold coin does nothing.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.ExitDoor"
+                },
+                "closed"
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.ExitDoor"
+                  ]
+                },
+                150
+              ]
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GoldCoin"
+                },
+                "present"
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.ExitDoor"
+            },
+            "open"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "silver_worth_two",
+    "description": "The silver coin adds 2 to the inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              2
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_worth_five",
+    "description": "The gold coin adds 5 to the inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              5
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "silver_collected_by_walking_over",
+    "description": "The silver coin is collected only by walking over it.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            ">": [
+              {
+                "dist": [
+                  "PlayerLocation",
+                  "ActorLocations.SilverCoin"
+                ]
+              },
+              150
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_collected_by_walking_over",
+    "description": "The gold coin is collected only by walking over it.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            ">": [
+              {
+                "dist": [
+                  "PlayerLocation",
+                  "ActorLocations.GoldCoin"
+                ]
+              },
+              150
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "inventory_only_from_coins",
+    "description": "Inventory changes only when a coin is collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "!=": [
+              {
+                "prev": "InventoryCount"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          {
+            "not": {
+              "and": [
+                {
+                  "==": [
+                    {
+                      "prev": "ActorStates.SilverCoin"
+                    },
+                    "present"
+                  ]
+                },
+                {
+                  "==": [
+                    {
+                      "var": "ActorStates.SilverCoin"
+                    },
+                    null
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "and": [
+                {
+                  "==": [
+                    {
+                      "prev": "ActorStates.GoldCoin"
+                    },
+                    "present"
+                  ]
+                },
+                {
+                  "==": [
+                    {
+                      "var": "ActorStates.GoldCoin"
+                    },
+                    null
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "no_death_outside_pit",
+    "description": "The player never dies outside the pit.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "PawnAlive"
+              },
+              false
+            ]
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "no_fall_through_floor_outside_pit",
+    "description": "The player never ends up below the floor outside the pit.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "<": [
+              {
+                "var": "PlayerLocation.Z"
+              },
+              50
+            ]
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "pit_fall_ends_attempt",
+    "description": "Falling into the pit ends the attempt.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              ">=": [
+                {
+                  "var": "PlayerLocation.X"
+                },
+                2350
+              ]
+            },
+            {
+              "<=": [
+                {
+                  "var": "PlayerLocation.X"
+                },
+                2650
+              ]
+            },
+            {
+              ">=": [
+                {
+                  "var": "PlayerLocation.Y"
+                },
+                350
+              ]
+            },
+            {
+              "<=": [
+                {
+                  "var": "PlayerLocation.Y"
+                },
+                650
+              ]
+            },
+            {
+              "<": [
+                {
+                  "var": "PlayerLocation.Z"
+                },
+                50
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "PawnAlive"
+            },
+            true
+          ]
+        }
+      ]
+    }
+  }
+]

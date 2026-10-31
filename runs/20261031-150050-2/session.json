@@ -1,0 +1,635 @@
+{
+  "session": {
+    "started": "2026-10-31T15:00:50.600361",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 141,
+    "cost_usd": 0.1768,
+    "duration_s": 524.4
+  },
+  "findings": [
+    {
+      "title": "Death outside pit on sweep lane y=-365",
+      "hypothesis": "Player at 2166,-357 Z11 alive=false outside pit bounds 2350-2650,350-650. Death outside pit violates invariant.",
+      "invariant": "no_death_outside_pit",
+      "invariant_description": "The player must never die outside the pit (x 2350-2650, y 350-650).",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "no_death_outside_pit",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane4.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Pit fall does not kill player",
+      "hypothesis": "Player at X2579 Y533 Z-417 inside pit bounds is falling but PawnAlive remains true, should have died when Z below -20.",
+      "invariant": "pit_fall_ends_attempt",
+      "invariant_description": "Falling into the pit (x 2350-2650, y 350-650) is intended and must end the attempt with death.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "pit_fall_ends_attempt",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t002_lane1.png",
+      "after": "shots/t002.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin only adds 1 instead of 5",
+      "hypothesis": "Collected silver gave 2, then gold went missing but inventory only increased from 2 to 3 (delta 1), not 5 as spec requires. Automatic check correctly flags.",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin adds 5 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t003_swept.png",
+      "after": "shots/t005.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Side door fails to open on interact",
+      "hypothesis": "Stood within ~75cm of SideDoor at (200,-700) and interacted; Door remained closed (state=closed) violating spec that it should open with or without inventory.",
+      "invariant": "side_door_opens_on_interact",
+      "invariant_description": "Standing next to the side door and interacting opens it, with or without inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_on_interact",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t005_reset.png",
+      "after": "shots/t008.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Exit door opens without gold coin on interact",
+      "hypothesis": "t9-10: at ExitDoor (3455,0) with GoldCoin=missing and inventory 1, interact changed ExitDoor from closed to open, violating stays closed without gold.",
+      "invariant": "exit_door_interact_does_nothing_without_gold",
+      "invariant_description": "Without the gold coin, interacting with the exit door does nothing and it stays closed.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "exit_door_interact_does_nothing_without_gold",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t016_reset.png",
+      "after": "shots/t020.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Silver coin only adds 1 instead of 2",
+      "hypothesis": "Collected SilverCoin at 1000,500: Inventory went from 1 to 2 (delta 1) but spec requires +2.",
+      "invariant": "silver_coin_worth_two",
+      "invariant_description": "The silver coin adds 2 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "silver_coin_worth_two",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t020_reset.png",
+      "after": "shots/t022.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Death outside pit on sweep lane y=-365",
+      "hypothesis": "Player at 2166,-357 Z11 alive=false outside pit bounds 2350-2650,350-650. Death outside pit violates invariant.",
+      "invariant": "no_death_outside_pit",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t001_lane4.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t001.png"
+    },
+    {
+      "title": "Pit fall does not kill player",
+      "hypothesis": "Player at X2579 Y533 Z-417 inside pit bounds is falling but PawnAlive remains true, should have died when Z below -20.",
+      "invariant": "pit_fall_ends_attempt",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t002_lane1.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t002.png"
+    },
+    {
+      "title": "Gold coin only adds 1 instead of 5",
+      "hypothesis": "Collected silver gave 2, then gold went missing but inventory only increased from 2 to 3 (delta 1), not 5 as spec requires. Automatic check correctly flags.",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t003_swept.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t005.png"
+    },
+    {
+      "title": "Side door fails to open on interact",
+      "hypothesis": "Stood within ~75cm of SideDoor at (200,-700) and interacted; Door remained closed (state=closed) violating spec that it should open with or without inventory.",
+      "invariant": "side_door_opens_on_interact",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t005_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t008.png"
+    },
+    {
+      "title": "Exit door opens without gold coin on interact",
+      "hypothesis": "t9-10: at ExitDoor (3455,0) with GoldCoin=missing and inventory 1, interact changed ExitDoor from closed to open, violating stays closed without gold.",
+      "invariant": "exit_door_interact_does_nothing_without_gold",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t016_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t020.png"
+    },
+    {
+      "title": "Silver coin only adds 1 instead of 2",
+      "hypothesis": "Collected SilverCoin at 1000,500: Inventory went from 1 to 2 (delta 1) but spec requires +2.",
+      "invariant": "silver_coin_worth_two",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t020_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150050-2/shots/t022.png"
+    }
+  ]
+}

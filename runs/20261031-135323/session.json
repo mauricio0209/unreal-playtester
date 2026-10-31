@@ -1,0 +1,310 @@
+{
+  "session": {
+    "started": "2026-10-31T13:53:23.205135",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 131,
+    "cost_usd": 0.2726,
+    "duration_s": 437.6
+  },
+  "findings": [
+    {
+      "title": "RedDoor did not open with RedKey",
+      "hypothesis": "Collected RedKey (state missing/carried) and interacted within 44cm of RedDoor at 2200,-700, but RedDoor state stayed closed and view shows blocked wall, violating must-open invariant.",
+      "invariant": "red_door_opens_with_own_key",
+      "invariant_description": "Interacting with RedDoor up close while carrying RedKey must open it.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "red_door_opens_with_own_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t004_reset.png",
+      "after": "shots/t006.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "GemBundle gave 1 instead of 3",
+      "hypothesis": "Walked to GemBundle at 2000,300; it disappeared and inventory went from 0 to 1, not 3 as required.",
+      "invariant": "gem_bundle_worth_three",
+      "invariant_description": "GemBundle adds exactly 3 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_bundle_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t010_reset.png",
+      "after": "shots/t012.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "BlueDoor opened without collecting BlueKey",
+      "hypothesis": "Interacted at BlueDoor (3455,0) with inventory 0; state shows BlueDoor open while BlueKey still present at 3000,-500, so door opened without its key.",
+      "invariant": "blue_door_needs_own_key",
+      "invariant_description": "BlueDoor must not open while BlueKey is still present.",
+      "steps": [
+        {
+          "action": "step",
+          "seconds": 0.5
+        },
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "blue_door_needs_own_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t014_reset.png",
+      "after": "shots/t017.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "RedDoor did not open with RedKey",
+      "hypothesis": "Collected RedKey (state missing/carried) and interacted within 44cm of RedDoor at 2200,-700, but RedDoor state stayed closed and view shows blocked wall, violating must-open invariant.",
+      "invariant": "red_door_opens_with_own_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-135323/shots/t004_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-135323/shots/t006.png"
+    },
+    {
+      "title": "GemBundle gave 1 instead of 3",
+      "hypothesis": "Walked to GemBundle at 2000,300; it disappeared and inventory went from 0 to 1, not 3 as required.",
+      "invariant": "gem_bundle_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-135323/shots/t010_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-135323/shots/t012.png"
+    },
+    {
+      "title": "BlueDoor opened without collecting BlueKey",
+      "hypothesis": "Interacted at BlueDoor (3455,0) with inventory 0; state shows BlueDoor open while BlueKey still present at 3000,-500, so door opened without its key.",
+      "invariant": "blue_door_needs_own_key",
+      "steps": [
+        {
+          "action": "step",
+          "seconds": 0.5
+        },
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-135323/shots/t014_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-135323/shots/t017.png"
+    }
+  ]
+}

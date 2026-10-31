@@ -1,0 +1,404 @@
+[
+  {
+    "id": "green_door_starts_closed",
+    "description": "GreenDoor starts closed and locked.",
+    "violation": {
+      "!=": [
+        {
+          "first": "ActorStates.GreenDoor"
+        },
+        "closed"
+      ]
+    }
+  },
+  {
+    "id": "red_door_starts_closed",
+    "description": "RedDoor starts closed and locked.",
+    "violation": {
+      "!=": [
+        {
+          "first": "ActorStates.RedDoor"
+        },
+        "closed"
+      ]
+    }
+  },
+  {
+    "id": "blue_door_starts_closed",
+    "description": "BlueDoor starts closed and locked.",
+    "violation": {
+      "!=": [
+        {
+          "first": "ActorStates.BlueDoor"
+        },
+        "closed"
+      ]
+    }
+  },
+  {
+    "id": "green_door_needs_own_key",
+    "description": "GreenDoor must not open while GreenKey is still present.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.GreenDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GreenKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "red_door_needs_own_key",
+    "description": "RedDoor must not open while RedKey is still present.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.RedDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.RedKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "blue_door_needs_own_key",
+    "description": "BlueDoor must not open while BlueKey is still present.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.BlueDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.BlueKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "green_door_opens_with_own_key",
+    "description": "Interacting with GreenDoor up close while carrying GreenKey must open it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GreenKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.GreenDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.GreenDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "red_door_opens_with_own_key",
+    "description": "Interacting with RedDoor up close while carrying RedKey must open it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.RedKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.RedDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.RedDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "blue_door_opens_with_own_key",
+    "description": "Interacting with BlueDoor up close while carrying BlueKey must open it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.BlueKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.BlueDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.BlueDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "coin_worth_one",
+    "description": "Coin adds exactly 1 to inventory when collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.Coin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.Coin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              1
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gem_bundle_worth_three",
+    "description": "GemBundle adds exactly 3 to inventory when collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GemBundle"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GemBundle"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              3
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "loot_never_disappears_without_inventory",
+    "description": "Loot never disappears without being added to inventory.",
+    "violation": {
+      "ever": {
+        "or": [
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.Coin"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.Coin"
+                  },
+                  null
+                ]
+              },
+              {
+                "<=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.GemBundle"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GemBundle"
+                  },
+                  null
+                ]
+              },
+              {
+                "<=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

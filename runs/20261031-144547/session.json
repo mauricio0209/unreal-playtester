@@ -1,0 +1,284 @@
+{
+  "session": {
+    "started": "2026-10-31T14:45:47.648848",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 133,
+    "cost_usd": 0.2338,
+    "duration_s": 421.1
+  },
+  "findings": [
+    {
+      "title": "Side door fails to open unconditionally",
+      "hypothesis": "At 156,-686 (<50cm from SideDoor) interact with inventory 0 left SideDoor closed; screenshot shows wall/door not opened, state confirms closed, violating unconditional open.",
+      "invariant": "side_door_opens_unconditionally",
+      "invariant_description": "Interacting with the side door up close opens it regardless of inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 200,
+          "y": -700,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_unconditionally",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t002_reset.png",
+      "after": "shots/t004.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin only gives 1 instead of 5",
+      "hypothesis": "Walked to gold coin location (1500,0) from reset, GoldCoin went from present to missing while InventoryCount went from 0 to 1 (delta 1 not 5), violating worth 5 invariant",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin adds 5 to the inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t006_reset.png",
+      "after": "shots/t008.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Exit door opens without gold coin",
+      "hypothesis": "Interacted with ExitDoor at ~45cm with inventory 1 and GoldCoin missing (not picked up) yet ExitDoor transitioned closed->open, violating no-open-without-gold.",
+      "invariant": "exit_door_no_open_without_gold_interact",
+      "invariant_description": "Interacting with the exit door without the gold coin does nothing.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 3500,
+          "y": 0,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "exit_door_no_open_without_gold_interact",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t021_reset.png",
+      "after": "shots/t024.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Side door fails to open unconditionally",
+      "hypothesis": "At 156,-686 (<50cm from SideDoor) interact with inventory 0 left SideDoor closed; screenshot shows wall/door not opened, state confirms closed, violating unconditional open.",
+      "invariant": "side_door_opens_unconditionally",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 200,
+          "y": -700,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-144547/shots/t002_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-144547/shots/t004.png"
+    },
+    {
+      "title": "Gold coin only gives 1 instead of 5",
+      "hypothesis": "Walked to gold coin location (1500,0) from reset, GoldCoin went from present to missing while InventoryCount went from 0 to 1 (delta 1 not 5), violating worth 5 invariant",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-144547/shots/t006_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-144547/shots/t008.png"
+    },
+    {
+      "title": "Exit door opens without gold coin",
+      "hypothesis": "Interacted with ExitDoor at ~45cm with inventory 1 and GoldCoin missing (not picked up) yet ExitDoor transitioned closed->open, violating no-open-without-gold.",
+      "invariant": "exit_door_no_open_without_gold_interact",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 3500,
+          "y": 0,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-144547/shots/t021_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-144547/shots/t024.png"
+    }
+  ]
+}

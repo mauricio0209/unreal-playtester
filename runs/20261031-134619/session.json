@@ -1,0 +1,215 @@
+{
+  "session": {
+    "started": "2026-10-31T13:46:19.731980",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 125,
+    "cost_usd": 0.2833,
+    "duration_s": 423.3
+  },
+  "findings": [
+    {
+      "title": "BlueDoor opens without BlueKey",
+      "hypothesis": "At (3455,0) interacted near BlueDoor with BlueKey still present and BlueDoor transitioned to open, violating needs-key condition",
+      "invariant": "blue_door_needs_blue_key",
+      "invariant_description": "BlueDoor must not open while BlueKey is still present.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "blue_door_needs_blue_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t009_reset.png",
+      "after": "shots/t011.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "GemBundle only adds 1 instead of 3",
+      "hypothesis": "Collected Coin (+1) then GemBundle; inventory went 0->1->2, so GemBundle delta was 1 not 3, violating gem_bundle_worth_three",
+      "invariant": "gem_bundle_worth_three",
+      "invariant_description": "GemBundle adds 3 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_bundle_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t023_reset.png",
+      "after": "shots/t026.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "BlueDoor opens without BlueKey",
+      "hypothesis": "At (3455,0) interacted near BlueDoor with BlueKey still present and BlueDoor transitioned to open, violating needs-key condition",
+      "invariant": "blue_door_needs_blue_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-134619/shots/t009_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-134619/shots/t011.png"
+    },
+    {
+      "title": "GemBundle only adds 1 instead of 3",
+      "hypothesis": "Collected Coin (+1) then GemBundle; inventory went 0->1->2, so GemBundle delta was 1 not 3, violating gem_bundle_worth_three",
+      "invariant": "gem_bundle_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-134619/shots/t023_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-134619/shots/t026.png"
+    }
+  ]
+}

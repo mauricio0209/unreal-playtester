@@ -1,0 +1,183 @@
+{
+  "session": {
+    "started": "2026-10-31T14:31:54.004826",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 132,
+    "cost_usd": 0.2316,
+    "duration_s": 413.1
+  },
+  "findings": [
+    {
+      "title": "Side door fails to open on interact up close",
+      "hypothesis": "Performed walk_to 200,-700 then interact while 46cm away; Inventory 0; ActorStates.SideDoor remained closed after interact which should have opened it regardless of inventory.",
+      "invariant": "side_door_opens_on_interact",
+      "invariant_description": "Interacting with the side door up close opens it regardless of inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_on_interact",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t000.png",
+      "after": "shots/t002.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin adds 1 instead of 5",
+      "hypothesis": "Silver gave 2 (inventory 2), after gold inventory 3 = delta 1 not 5, violates exactly 5.",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "Collecting the gold coin adds exactly 5 to inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t004_reset.png",
+      "after": "shots/t007.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Side door fails to open on interact up close",
+      "hypothesis": "Performed walk_to 200,-700 then interact while 46cm away; Inventory 0; ActorStates.SideDoor remained closed after interact which should have opened it regardless of inventory.",
+      "invariant": "side_door_opens_on_interact",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143154/shots/t000.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143154/shots/t002.png"
+    },
+    {
+      "title": "Gold coin adds 1 instead of 5",
+      "hypothesis": "Silver gave 2 (inventory 2), after gold inventory 3 = delta 1 not 5, violates exactly 5.",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143154/shots/t004_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143154/shots/t007.png"
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "session": {
+    "started": "2026-10-31T14:38:47.368758",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 126,
+    "cost_usd": 0.2295,
+    "duration_s": 420.1
+  },
+  "findings": [
+    {
+      "title": "Side door stayed closed after interact",
+      "hypothesis": "Player at 156,-686 within 50cm of SideDoor at 200,-700 interacted but ActorStates.SideDoor remained closed violating never-locked requirement",
+      "invariant": "side_door_opens_when_used",
+      "invariant_description": "The side door is never locked: standing next to it and interacting opens it.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_when_used",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t000.png",
+      "after": "shots/t002.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin gave +1 instead of +5",
+      "hypothesis": "Inventory went from 2 to 3 after collecting GoldCoin (present->missing) delta=1 not 5, so gold_coin_worth_five is actually violated despite automatic check saying holds.",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin is worth 5 when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t002_reset.png",
+      "after": "shots/t005.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Exit door opened without gold coin",
+      "hypothesis": "Walked to ExitDoor (3500,0) and interacted with InventoryCount=1 and GoldCoin missing, yet ExitDoor state became open. Invariant requires GoldCoin carried (state null after collection) to open.",
+      "invariant": "exit_door_needs_gold_coin",
+      "invariant_description": "The exit door opens only for a player carrying the gold coin.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "exit_door_needs_gold_coin",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t013_reset.png",
+      "after": "shots/t015.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Side door stayed closed after interact",
+      "hypothesis": "Player at 156,-686 within 50cm of SideDoor at 200,-700 interacted but ActorStates.SideDoor remained closed violating never-locked requirement",
+      "invariant": "side_door_opens_when_used",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143847/shots/t000.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143847/shots/t002.png"
+    },
+    {
+      "title": "Gold coin gave +1 instead of +5",
+      "hypothesis": "Inventory went from 2 to 3 after collecting GoldCoin (present->missing) delta=1 not 5, so gold_coin_worth_five is actually violated despite automatic check saying holds.",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143847/shots/t002_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143847/shots/t005.png"
+    },
+    {
+      "title": "Exit door opened without gold coin",
+      "hypothesis": "Walked to ExitDoor (3500,0) and interacted with InventoryCount=1 and GoldCoin missing, yet ExitDoor state became open. Invariant requires GoldCoin carried (state null after collection) to open.",
+      "invariant": "exit_door_needs_gold_coin",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143847/shots/t013_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-143847/shots/t015.png"
+    }
+  ]
+}

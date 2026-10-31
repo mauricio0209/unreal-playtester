@@ -1,0 +1,296 @@
+[
+  {
+    "id": "side_door_opens_unconditionally",
+    "description": "Interacting with the side door up close opens it regardless of inventory.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.SideDoor"
+                },
+                "closed"
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.SideDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.SideDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_stays_locked_without_gold",
+    "description": "The exit door stays locked until the gold coin is picked up.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.ExitDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "exit_door_opens_with_gold",
+    "description": "With the gold coin, interacting with the exit door opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GoldCoin"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.ExitDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.ExitDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_no_open_without_gold_interact",
+    "description": "Interacting with the exit door without the gold coin does nothing.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "did": "interact"
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "<": [
+              {
+                "dist": [
+                  "PlayerLocation",
+                  "ActorLocations.ExitDoor"
+                ]
+              },
+              150
+            ]
+          },
+          {
+            "==": [
+              {
+                "prev": "ActorStates.ExitDoor"
+              },
+              "closed"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.ExitDoor"
+              },
+              "open"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "silver_coin_worth_two",
+    "description": "The silver coin adds 2 to the inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              2
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_coin_worth_five",
+    "description": "The gold coin adds 5 to the inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              5
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "no_death_outside_pit",
+    "description": "The player must never die or fall through the floor outside the pit x 2350-2650 y 350-650.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "PawnAlive"
+              },
+              false
+            ]
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

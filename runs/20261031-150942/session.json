@@ -1,0 +1,286 @@
+{
+  "session": {
+    "started": "2026-10-31T15:09:42.555182",
+    "model": "muse-spark-1.3-contributor",
+    "actions": 160,
+    "cost_usd": 0.3106,
+    "duration_s": 526.6
+  },
+  "findings": [
+    {
+      "title": "Death outside pit at (2166,-357)",
+      "hypothesis": "PawnAlive false at X=2166 Y=-357 which is outside pit bounds 2350-2650,350-650, so death occurred outside pit",
+      "invariant": "death_only_in_pit",
+      "invariant_description": "The player never dies outside the pit.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "death_only_in_pit",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane4.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Side door did not open on nearby interact",
+      "hypothesis": "At ~46cm from SideDoor I interacted and state stayed closed, image shows wall up close, breaking side_door_opens",
+      "invariant": "side_door_opens",
+      "invariant_description": "The side door opens when interacted with from nearby.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t004_swept.png",
+      "after": "shots/t006.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin gave 1 instead of 5",
+      "hypothesis": "Picked up gold going from (978,489) to (1484,15): Silver correctly made 0->2, but gold made 2->3 (+1 not +5), violating gold worth 5. Observed state shows both coins missing with InventoryCount 3.",
+      "invariant": "gold_worth_five",
+      "invariant_description": "The gold coin adds 5 to the inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t008_reset.png",
+      "after": "shots/t011.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Death outside pit at (2166,-357)",
+      "hypothesis": "PawnAlive false at X=2166 Y=-357 which is outside pit bounds 2350-2650,350-650, so death occurred outside pit",
+      "invariant": "death_only_in_pit",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150942/shots/t001_lane4.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150942/shots/t001.png"
+    },
+    {
+      "title": "Side door did not open on nearby interact",
+      "hypothesis": "At ~46cm from SideDoor I interacted and state stayed closed, image shows wall up close, breaking side_door_opens",
+      "invariant": "side_door_opens",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150942/shots/t004_swept.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150942/shots/t006.png"
+    },
+    {
+      "title": "Gold coin gave 1 instead of 5",
+      "hypothesis": "Picked up gold going from (978,489) to (1484,15): Silver correctly made 0->2, but gold made 2->3 (+1 not +5), violating gold worth 5. Observed state shows both coins missing with InventoryCount 3.",
+      "invariant": "gold_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150942/shots/t008_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150942/shots/t011.png"
+    }
+  ]
+}

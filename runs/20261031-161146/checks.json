@@ -1,0 +1,215 @@
+[
+  {
+    "id": "exit_requires_gold",
+    "description": "Exit door stays closed until gold coin is picked up.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.ExitDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "silver_worth_two",
+    "description": "Silver coin adds exactly 2 to inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              2
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_worth_five",
+    "description": "Gold coin adds exactly 5 to inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              5
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "never_die_outside_pit",
+    "description": "Player never dies outside the pit.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "not": {
+              "var": "PawnAlive"
+            }
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "never_below_floor_outside_pit",
+    "description": "Player never goes below floor outside the pit.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "<": [
+              {
+                "var": "PlayerLocation.Z"
+              },
+              0
+            ]
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

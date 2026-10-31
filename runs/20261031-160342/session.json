@@ -1,0 +1,371 @@
+{
+  "session": {
+    "started": "2026-10-31T16:03:42.492040",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 164,
+    "cost_usd": 0.0827,
+    "duration_s": 372.8
+  },
+  "findings": [
+    {
+      "title": "Fell out of world outside intentional pit",
+      "hypothesis": "Sweep lane y=-500 fell at X=2179 Y=-489 Z=6 PawnAlive false outside decoy_pit region, Z below floor threshold, indicates hole in floor geometry",
+      "invariant": "no_fall_out_of_world",
+      "invariant_description": "The player pawn must never fall out of the world: die, drop below KillZ, or end up more than 2 m below the floor (Z < -200), except through a region the design marks as intentional. A fall anywhere else is a level geometry bug.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -400,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "no_fall_out_of_world",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane7.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Door1 does not open after interact within range",
+      "hypothesis": "At (3455,0) 45cm from Door1 (3500,0) performed interact and stepped, but Objects.Door1 remains 'closed' and view shows wall, violating door_opens requirement",
+      "invariant": "door_opens",
+      "invariant_description": "Interacting with Door1 while standing within 150 cm of it must open the door. If the door is still not open after a later step, the interaction is broken.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "door_opens",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t010_reset.png",
+      "after": "shots/t012.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Door2 stays closed after in-range interact",
+      "hypothesis": "At (156,-686) distance ~46cm to Door2 at (200,-700) well within 150cm, after walk_to + interact + step Door2 state is still closed, violating must-open rule. Auto-check incorrectly reported holds.",
+      "invariant": "door2_opens",
+      "invariant_description": "Interacting with Door2 while standing within 150 cm of it must open the door. If the door is still not open after a later step, the interaction is broken.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "door2_opens",
+        "confirmed": false,
+        "runs": [
+          true,
+          false,
+          true
+        ],
+        "reason": "bug reproduced in 2 of 3 runs"
+      },
+      "before": "shots/t012_reset.png",
+      "after": "shots/t014.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Pickup1 disappears without increasing InventoryCount",
+      "hypothesis": "Player moved to Pickup1 location (1000,500) - state shows Objects.Pickup1=missing but InventoryCount=0 same as before collection. Expected count to increase by 1 when pickup disappears.",
+      "invariant": "pickup_counts",
+      "invariant_description": "Collecting Pickup1 (it disappears from the world) must increase InventoryCount. If it is gone but the count is unchanged since it was last present, the pickup was lost.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "pickup_counts",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t014_reset.png",
+      "after": "shots/t016.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Fell out of world outside intentional pit",
+      "hypothesis": "Sweep lane y=-500 fell at X=2179 Y=-489 Z=6 PawnAlive false outside decoy_pit region, Z below floor threshold, indicates hole in floor geometry",
+      "invariant": "no_fall_out_of_world",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -400,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t001_lane7.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t001.png"
+    },
+    {
+      "title": "Door1 does not open after interact within range",
+      "hypothesis": "At (3455,0) 45cm from Door1 (3500,0) performed interact and stepped, but Objects.Door1 remains 'closed' and view shows wall, violating door_opens requirement",
+      "invariant": "door_opens",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t010_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t012.png"
+    },
+    {
+      "title": "Door2 stays closed after in-range interact",
+      "hypothesis": "At (156,-686) distance ~46cm to Door2 at (200,-700) well within 150cm, after walk_to + interact + step Door2 state is still closed, violating must-open rule. Auto-check incorrectly reported holds.",
+      "invariant": "door2_opens",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t012_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t014.png"
+    },
+    {
+      "title": "Pickup1 disappears without increasing InventoryCount",
+      "hypothesis": "Player moved to Pickup1 location (1000,500) - state shows Objects.Pickup1=missing but InventoryCount=0 same as before collection. Expected count to increase by 1 when pickup disappears.",
+      "invariant": "pickup_counts",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t014_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160342/shots/t016.png"
+    }
+  ]
+}

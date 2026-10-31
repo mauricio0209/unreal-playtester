@@ -1,0 +1,318 @@
+{
+  "session": {
+    "started": "2026-10-31T16:03:52.018421",
+    "model": "muse-spark-1.3-contributor",
+    "actions": 146,
+    "cost_usd": 0.0679,
+    "duration_s": 296.0
+  },
+  "findings": [
+    {
+      "title": "Fell through floor at (2179,-489)",
+      "hypothesis": "Player dead at X=2179 Y=-489 Z=6 outside intentional pit region 2350-2650,350-650, indicates level geometry hole causing fall out of world",
+      "invariant": "no_fall_out_of_world",
+      "invariant_description": "The player pawn must never fall out of the world: die, drop below KillZ, or end up more than 2 m below the floor (Z < -200), except through a region the design marks as intentional. A fall anywhere else is a level geometry bug.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -400,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "no_fall_out_of_world",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane7.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Door1 did not open after interact in range",
+      "hypothesis": "At 45cm from Door1 interacted and stepped, state still closed, violating door_opens",
+      "invariant": "door_opens",
+      "invariant_description": "Interacting with Door1 while standing within 150 cm of it must open the door. If the door is still not open after a later step, the interaction is broken.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 3500,
+          "y": 0,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "door_opens",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t003_swept.png",
+      "after": "shots/t006.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Pickup1 disappeared without increasing inventory",
+      "hypothesis": "Walked to Pickup1 location, state shows Pickup1 missing while InventoryCount remains 0, so collection did not count.",
+      "invariant": "pickup_counts",
+      "invariant_description": "Collecting Pickup1 (it disappears from the world) must increase InventoryCount. If it is gone but the count is unchanged since it was last present, the pickup was lost.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "pickup_counts",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t009_reset.png",
+      "after": "shots/t011.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Fell through floor at (2179,-489)",
+      "hypothesis": "Player dead at X=2179 Y=-489 Z=6 outside intentional pit region 2350-2650,350-650, indicates level geometry hole causing fall out of world",
+      "invariant": "no_fall_out_of_world",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -400,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 4900,
+          "y": -500
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160352/shots/t001_lane7.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160352/shots/t001.png"
+    },
+    {
+      "title": "Door1 did not open after interact in range",
+      "hypothesis": "At 45cm from Door1 interacted and stepped, state still closed, violating door_opens",
+      "invariant": "door_opens",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 3500,
+          "y": 0,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160352/shots/t003_swept.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160352/shots/t006.png"
+    },
+    {
+      "title": "Pickup1 disappeared without increasing inventory",
+      "hypothesis": "Walked to Pickup1 location, state shows Pickup1 missing while InventoryCount remains 0, so collection did not count.",
+      "invariant": "pickup_counts",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160352/shots/t009_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-160352/shots/t011.png"
+    }
+  ]
+}

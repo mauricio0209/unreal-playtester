@@ -1,0 +1,302 @@
+{
+  "session": {
+    "started": "2026-10-31T15:48:12.443977",
+    "model": "muse-spark-1.3-contributor",
+    "actions": 149,
+    "cost_usd": 0.3963,
+    "duration_s": 498.1
+  },
+  "findings": [
+    {
+      "title": "Blue door opened without blue key",
+      "hypothesis": "Walked to BlueDoor at 3500,0 and interacted; state shows BlueDoor open while BlueKey still present, violating blue_needs_key",
+      "invariant": "blue_needs_key",
+      "invariant_description": "The blue door stays closed until the blue key is picked up.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "blue_needs_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t004_reset.png",
+      "after": "shots/t006.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Red door did not open with red key",
+      "hypothesis": "Picked up RedKey then interacted at RedDoor within range yet state shows RedDoor closed, violating opens-with-key",
+      "invariant": "red_opens_with_key",
+      "invariant_description": "With the red key, interacting with the red door opens it.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "red_opens_with_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t008_reset.png",
+      "after": "shots/t010.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gem bundle only gave 1",
+      "hypothesis": "Walked to GemBundle at 2000,300, it went missing but InventoryCount is 1 instead of 3, violating gem worth 3.",
+      "invariant": "gem_worth_three",
+      "invariant_description": "A gem bundle adds 3 to the inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t014_reset.png",
+      "after": "shots/t016.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Blue door opened without blue key",
+      "hypothesis": "Walked to BlueDoor at 3500,0 and interacted; state shows BlueDoor open while BlueKey still present, violating blue_needs_key",
+      "invariant": "blue_needs_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154812/shots/t004_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154812/shots/t006.png"
+    },
+    {
+      "title": "Red door did not open with red key",
+      "hypothesis": "Picked up RedKey then interacted at RedDoor within range yet state shows RedDoor closed, violating opens-with-key",
+      "invariant": "red_opens_with_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154812/shots/t008_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154812/shots/t010.png"
+    },
+    {
+      "title": "Gem bundle only gave 1",
+      "hypothesis": "Walked to GemBundle at 2000,300, it went missing but InventoryCount is 1 instead of 3, violating gem worth 3.",
+      "invariant": "gem_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154812/shots/t014_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154812/shots/t016.png"
+    }
+  ]
+}

@@ -1,0 +1,486 @@
+{
+  "session": {
+    "started": "2026-10-31T15:17:07.782728",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 167,
+    "cost_usd": 0.1855,
+    "duration_s": 483.7
+  },
+  "findings": [
+    {
+      "title": "Floor not solid outside pit - fell through at (2166,-357)",
+      "hypothesis": "Scripted sweep at y=-365 caused death at X=2166 Y=-357 Z=11 outside pit bounds (2350-2650,350-650). Floor should be solid outside pit but player died/fell through.",
+      "invariant": "floor_solid_outside_pit",
+      "invariant_description": "Outside the pit (x 2350-2650 y 350-650) the floor is solid: the player must never die or fall below the floor.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "floor_solid_outside_pit",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane4.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Side door did not open on interact",
+      "hypothesis": "Interacted at 46cm from SideDoor but state stayed closed, image shows closed door/wall, violating never-locked expectation",
+      "invariant": "side_door_opens_when_interacted",
+      "invariant_description": "The side door is never locked: interacting next to it opens it with or without items.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_when_interacted",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t003_swept.png",
+      "after": "shots/t004.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin added only 1 instead of 5",
+      "hypothesis": "Collected silver gave 2 as expected (inventory 2), then collecting gold at ~1500,0 increased inventory from 2 to 3 instead of to 7, violating worth 5.",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin is worth 5 and adds 5 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t006_reset.png",
+      "after": "shots/t009.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Pit kills player instead of ending attempt alive",
+      "hypothesis": "Player at pit coordinates 2350-2650/350-650 Z=5 has PawnAlive=false, but spec says after entering pit PawnAlive must remain true; the pit incorrectly causes death.",
+      "invariant": "pit_ends_attempt",
+      "invariant_description": "Falling into the pit from x 2350 to 2650 and y 350 to 650 is intended and ends the attempt.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2500,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "pit_ends_attempt",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t011_reset.png",
+      "after": "shots/t013.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Exit door opened without gold coin",
+      "hypothesis": "Interacted at ExitDoor at ~3455,0 with Inventory 1 and GoldCoin not collected (state missing/present), door state became open, violating requirement that exit stays closed unless carrying gold.",
+      "invariant": "exit_door_stays_locked_without_gold",
+      "invariant_description": "The exit door opens only for a player carrying the gold coin; without it the door stays closed.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "exit_door_stays_locked_without_gold",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t019_reset.png",
+      "after": "shots/t021.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Floor not solid outside pit - fell through at (2166,-357)",
+      "hypothesis": "Scripted sweep at y=-365 caused death at X=2166 Y=-357 Z=11 outside pit bounds (2350-2650,350-650). Floor should be solid outside pit but player died/fell through.",
+      "invariant": "floor_solid_outside_pit",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t001_lane4.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t001.png"
+    },
+    {
+      "title": "Side door did not open on interact",
+      "hypothesis": "Interacted at 46cm from SideDoor but state stayed closed, image shows closed door/wall, violating never-locked expectation",
+      "invariant": "side_door_opens_when_interacted",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t003_swept.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t004.png"
+    },
+    {
+      "title": "Gold coin added only 1 instead of 5",
+      "hypothesis": "Collected silver gave 2 as expected (inventory 2), then collecting gold at ~1500,0 increased inventory from 2 to 3 instead of to 7, violating worth 5.",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t006_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t009.png"
+    },
+    {
+      "title": "Pit kills player instead of ending attempt alive",
+      "hypothesis": "Player at pit coordinates 2350-2650/350-650 Z=5 has PawnAlive=false, but spec says after entering pit PawnAlive must remain true; the pit incorrectly causes death.",
+      "invariant": "pit_ends_attempt",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2500,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t011_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t013.png"
+    },
+    {
+      "title": "Exit door opened without gold coin",
+      "hypothesis": "Interacted at ExitDoor at ~3455,0 with Inventory 1 and GoldCoin not collected (state missing/present), door state became open, violating requirement that exit stays closed unless carrying gold.",
+      "invariant": "exit_door_stays_locked_without_gold",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t019_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-151707/shots/t021.png"
+    }
+  ]
+}

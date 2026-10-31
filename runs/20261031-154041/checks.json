@@ -1,0 +1,299 @@
+[
+  {
+    "id": "green_door_never_open_without_key",
+    "description": "Green door stays closed until green key is picked up.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.GreenDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GreenKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "red_door_never_open_without_key",
+    "description": "Red door stays closed until red key is picked up.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.RedDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.RedKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "blue_door_never_open_without_key",
+    "description": "Blue door stays closed until blue key is picked up.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.BlueDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.BlueKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "coin_worth_one",
+    "description": "Coin adds exactly 1 to inventory when collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.Coin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.Coin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              1
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gem_bundle_worth_three",
+    "description": "Gem bundle adds exactly 3 to inventory when collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GemBundle"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GemBundle"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              3
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "loot_never_disappears_without_inventory",
+    "description": "Loot never disappears without being added to inventory.",
+    "violation": {
+      "ever": {
+        "or": [
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.Coin"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.Coin"
+                  },
+                  null
+                ]
+              },
+              {
+                "<=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.GemBundle"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GemBundle"
+                  },
+                  null
+                ]
+              },
+              {
+                "<=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "inventory_only_from_loot",
+    "description": "Inventory count only increases when loot is collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            ">": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          {
+            "!=": [
+              {
+                "prev": "ActorStates.Coin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "var": "ActorStates.Coin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "prev": "ActorStates.GemBundle"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "var": "ActorStates.GemBundle"
+              },
+              null
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

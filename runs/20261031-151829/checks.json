@@ -1,0 +1,554 @@
+[
+  {
+    "id": "side_door_opens",
+    "description": "Interacting next to the side door opens it with or without anything in their pockets.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.SideDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.SideDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_needs_gold",
+    "description": "The exit door stays closed while the gold coin is still in the world.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.ExitDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "exit_door_opens_with_gold",
+    "description": "With the gold coin, interacting with the exit door opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GoldCoin"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.ExitDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.ExitDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "silver_worth_two",
+    "description": "Collecting the silver coin adds exactly 2 to the inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              2
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_worth_five",
+    "description": "Collecting the gold coin adds exactly 5 to the inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              5
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "silver_walkover",
+    "description": "The silver coin is collected only by walking over it.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            "or": [
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  {
+                    "+": [
+                      {
+                        "first": "ActorLocations.SilverCoin.X"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  {
+                    "-": [
+                      {
+                        "first": "ActorLocations.SilverCoin.X"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  {
+                    "+": [
+                      {
+                        "first": "ActorLocations.SilverCoin.Y"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  {
+                    "-": [
+                      {
+                        "first": "ActorLocations.SilverCoin.Y"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_walkover",
+    "description": "The gold coin is collected only by walking over it.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            "or": [
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  {
+                    "+": [
+                      {
+                        "first": "ActorLocations.GoldCoin.X"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  {
+                    "-": [
+                      {
+                        "first": "ActorLocations.GoldCoin.X"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  {
+                    "+": [
+                      {
+                        "first": "ActorLocations.GoldCoin.Y"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  {
+                    "-": [
+                      {
+                        "first": "ActorLocations.GoldCoin.Y"
+                      },
+                      150
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "pit_ends_attempt",
+    "description": "Falling into the pit from x 2350 to 2650 and y 350 to 650 ends the attempt.",
+    "violation": {
+      "and": [
+        {
+          "ever": {
+            "and": [
+              {
+                ">=": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                "<=": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                ">=": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                "<=": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "final": {
+            "==": [
+              {
+                "var": "PawnAlive"
+              },
+              true
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "never_die_outside_pit",
+    "description": "The player must never die outside the pit from x 2350 to 2650 and y 350 to 650.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "PawnAlive"
+              },
+              false
+            ]
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "never_below_floor_outside_pit",
+    "description": "The player must never end up below the floor outside the pit from x 2350 to 2650 and y 350 to 650.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "<": [
+              {
+                "var": "PlayerLocation.Z"
+              },
+              0
+            ]
+          },
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "starts_west_hall",
+    "description": "The player starts in the west hall at (0, 0).",
+    "violation": {
+      "or": [
+        {
+          "!=": [
+            {
+              "first": "PlayerLocation.X"
+            },
+            0
+          ]
+        },
+        {
+          "!=": [
+            {
+              "first": "PlayerLocation.Y"
+            },
+            0
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,302 @@
+{
+  "session": {
+    "started": "2026-10-31T13:39:05.209127",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 136,
+    "cost_usd": 0.2631,
+    "duration_s": 434.4
+  },
+  "findings": [
+    {
+      "title": "GemBundle gives 1 instead of 3",
+      "hypothesis": "Walked to GemBundle location and it disappeared but InventoryCount only increased to 1; expected +3. Auto-check incorrectly reports holds.",
+      "invariant": "gem_bundle_worth_three",
+      "invariant_description": "GemBundle adds exactly 3 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_bundle_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t008_reset.png",
+      "after": "shots/t010.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Blue door opened without collecting BlueKey",
+      "hypothesis": "Interacted with BlueDoor at 3500,0 without picking up BlueKey; State shows BlueDoor=open while BlueKey=present, breaking the requires-key rule.",
+      "invariant": "blue_door_needs_blue_key",
+      "invariant_description": "Blue door cannot open while BlueKey is still present.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "blue_door_needs_blue_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t010_reset.png",
+      "after": "shots/t012.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Red door does not open with RedKey",
+      "hypothesis": "Collected RedKey (state missing, within 50cm of RedDoor at 2200,-700) and executed interact, but RedDoor remains closed instead of opening, violating the required open-on-interact behavior.",
+      "invariant": "red_door_opens_with_red_key",
+      "invariant_description": "Interacting with RedDoor while carrying RedKey must open it.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "red_door_opens_with_red_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t012_reset.png",
+      "after": "shots/t014.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "GemBundle gives 1 instead of 3",
+      "hypothesis": "Walked to GemBundle location and it disappeared but InventoryCount only increased to 1; expected +3. Auto-check incorrectly reports holds.",
+      "invariant": "gem_bundle_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-133905/shots/t008_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-133905/shots/t010.png"
+    },
+    {
+      "title": "Blue door opened without collecting BlueKey",
+      "hypothesis": "Interacted with BlueDoor at 3500,0 without picking up BlueKey; State shows BlueDoor=open while BlueKey=present, breaking the requires-key rule.",
+      "invariant": "blue_door_needs_blue_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-133905/shots/t010_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-133905/shots/t012.png"
+    },
+    {
+      "title": "Red door does not open with RedKey",
+      "hypothesis": "Collected RedKey (state missing, within 50cm of RedDoor at 2200,-700) and executed interact, but RedDoor remains closed instead of opening, violating the required open-on-interact behavior.",
+      "invariant": "red_door_opens_with_red_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-133905/shots/t012_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-133905/shots/t014.png"
+    }
+  ]
+}

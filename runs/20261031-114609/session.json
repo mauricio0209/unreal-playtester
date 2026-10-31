@@ -1,0 +1,117 @@
+{
+  "session": {
+    "started": "2026-10-31T11:46:09.648637",
+    "model": "",
+    "actions": 40,
+    "cost_usd": 0.0,
+    "duration_s": 186.0
+  },
+  "findings": [
+    {
+      "title": "blue_door_needs_key broken (scripted check)",
+      "hypothesis": "Scripted object BlueDoor episode broke blue_door_needs_key.",
+      "invariant": "blue_door_needs_key",
+      "invariant_description": "The blue door is never open while the blue key is still present.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        },
+        {
+          "action": "interact"
+        }
+      ],
+      "verdict": {
+        "invariant": "blue_door_needs_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_000_before.png",
+      "after": "shots/baseline_000_after.png",
+      "video_gif": "videos/bug1.gif",
+      "video_mp4": "videos/bug1.mp4"
+    },
+    {
+      "title": "gem_worth_three broken (scripted check)",
+      "hypothesis": "Scripted object GemBundle episode broke gem_worth_three.",
+      "invariant": "gem_worth_three",
+      "invariant_description": "Collecting the gem bundle adds exactly 3 to the inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 4.370624736026114
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_003_before.png",
+      "after": "shots/baseline_003_after.png",
+      "video_gif": "videos/bug2.gif",
+      "video_mp4": "videos/bug2.mp4"
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "blue_door_needs_key broken (scripted check)",
+      "hypothesis": "Scripted object BlueDoor episode broke blue_door_needs_key.",
+      "invariant": "blue_door_needs_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        },
+        {
+          "action": "interact"
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-114609/shots/baseline_000_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-114609/shots/baseline_000_after.png"
+    },
+    {
+      "title": "gem_worth_three broken (scripted check)",
+      "hypothesis": "Scripted object GemBundle episode broke gem_worth_three.",
+      "invariant": "gem_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 4.370624736026114
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-114609/shots/baseline_003_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-114609/shots/baseline_003_after.png"
+    }
+  ]
+}

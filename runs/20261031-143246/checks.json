@@ -1,0 +1,312 @@
+[
+  {
+    "id": "side_door_opens",
+    "description": "Interacting with the side door from up close opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.SideDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.SideDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_opens_with_coin",
+    "description": "With the gold coin, interacting with the exit door from up close opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GoldCoin"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.ExitDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.ExitDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "exit_door_needs_coin",
+    "description": "The exit door opens only for a player carrying the gold coin.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.ExitDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "silver_worth_two",
+    "description": "The silver coin adds 2 to the inventory count.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.SilverCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.SilverCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              2
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gold_worth_five",
+    "description": "The gold coin adds 5 to the inventory count.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GoldCoin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GoldCoin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              5
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "floor_solid_outside_pit",
+    "description": "Outside the pit the player must never die or end up below the floor.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "or": [
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.X"
+                  },
+                  2650
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  350
+                ]
+              },
+              {
+                ">": [
+                  {
+                    "var": "PlayerLocation.Y"
+                  },
+                  650
+                ]
+              }
+            ]
+          },
+          {
+            "or": [
+              {
+                "==": [
+                  {
+                    "var": "PawnAlive"
+                  },
+                  false
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "var": "PlayerLocation.Z"
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "pit_ends_attempt",
+    "description": "Falling into the pit ends the attempt.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              ">=": [
+                {
+                  "var": "PlayerLocation.X"
+                },
+                2350
+              ]
+            },
+            {
+              "<=": [
+                {
+                  "var": "PlayerLocation.X"
+                },
+                2650
+              ]
+            },
+            {
+              ">=": [
+                {
+                  "var": "PlayerLocation.Y"
+                },
+                350
+              ]
+            },
+            {
+              "<=": [
+                {
+                  "var": "PlayerLocation.Y"
+                },
+                650
+              ]
+            },
+            {
+              "<": [
+                {
+                  "var": "PlayerLocation.Z"
+                },
+                50
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "PawnAlive"
+            },
+            true
+          ]
+        }
+      ]
+    }
+  }
+]

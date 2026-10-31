@@ -1,0 +1,183 @@
+{
+  "session": {
+    "started": "2026-10-31T14:25:05.608854",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 129,
+    "cost_usd": 0.2103,
+    "duration_s": 408.2
+  },
+  "findings": [
+    {
+      "title": "Gold coin gives 1 instead of 5",
+      "hypothesis": "Collected silver correctly gave 2, then gold changed inventory from 2 to 3 (delta 1) not 5, breaking worth invariant",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin is worth 5 when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.5
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t002_reset.png",
+      "after": "shots/t005.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Side door does not open on interact",
+      "hypothesis": "Player at ~46cm from SideDoor interacted and state remained closed instead of opening",
+      "invariant": "side_door_opens_on_interact",
+      "invariant_description": "In the west hall the side door is never locked and opens when a player standing next to it interacts.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_on_interact",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t010_reset.png",
+      "after": "shots/t012.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Gold coin gives 1 instead of 5",
+      "hypothesis": "Collected silver correctly gave 2, then gold changed inventory from 2 to 3 (delta 1) not 5, breaking worth invariant",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.5
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-142505/shots/t002_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-142505/shots/t005.png"
+    },
+    {
+      "title": "Side door does not open on interact",
+      "hypothesis": "Player at ~46cm from SideDoor interacted and state remained closed instead of opening",
+      "invariant": "side_door_opens_on_interact",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-142505/shots/t010_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-142505/shots/t012.png"
+    }
+  ]
+}

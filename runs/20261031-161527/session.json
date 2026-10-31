@@ -1,0 +1,125 @@
+{
+  "session": {
+    "started": "2026-10-31T16:15:27.508899",
+    "model": "",
+    "actions": 20,
+    "cost_usd": 0.0,
+    "duration_s": 66.7
+  },
+  "findings": [
+    {
+      "title": "gold_coin_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_coin_worth_five.",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin is worth 5 and adds 5 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_000_before.png",
+      "after": "shots/baseline_000_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "side_door_opens_when_interacted broken (scripted check)",
+      "hypothesis": "Scripted object SideDoor episode broke side_door_opens_when_interacted.",
+      "invariant": "side_door_opens_when_interacted",
+      "invariant_description": "The side door is never locked: interacting next to it opens it with or without items.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 2.2133516482134197
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_when_interacted",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_002_before.png",
+      "after": "shots/baseline_002_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "gold_coin_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_coin_worth_five.",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161527/shots/baseline_000_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161527/shots/baseline_000_after.png"
+    },
+    {
+      "title": "side_door_opens_when_interacted broken (scripted check)",
+      "hypothesis": "Scripted object SideDoor episode broke side_door_opens_when_interacted.",
+      "invariant": "side_door_opens_when_interacted",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 2.2133516482134197
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161527/shots/baseline_002_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161527/shots/baseline_002_after.png"
+    }
+  ]
+}

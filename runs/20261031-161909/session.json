@@ -1,0 +1,125 @@
+{
+  "session": {
+    "started": "2026-10-31T16:19:09.749266",
+    "model": "",
+    "actions": 20,
+    "cost_usd": 0.0,
+    "duration_s": 66.8
+  },
+  "findings": [
+    {
+      "title": "gold_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_worth_five.",
+      "invariant": "gold_worth_five",
+      "invariant_description": "The gold coin adds 5 to the inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_000_before.png",
+      "after": "shots/baseline_000_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "side_door_opens_empty broken (scripted check)",
+      "hypothesis": "Scripted object SideDoor episode broke side_door_opens_empty.",
+      "invariant": "side_door_opens_empty",
+      "invariant_description": "Standing next to the side door and interacting with empty pockets opens it.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 2.2133516482134197
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_empty",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_002_before.png",
+      "after": "shots/baseline_002_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "gold_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_worth_five.",
+      "invariant": "gold_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161909/shots/baseline_000_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161909/shots/baseline_000_after.png"
+    },
+    {
+      "title": "side_door_opens_empty broken (scripted check)",
+      "hypothesis": "Scripted object SideDoor episode broke side_door_opens_empty.",
+      "invariant": "side_door_opens_empty",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 2.2133516482134197
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161909/shots/baseline_002_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161909/shots/baseline_002_after.png"
+    }
+  ]
+}

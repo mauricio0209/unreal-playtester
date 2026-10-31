@@ -1,0 +1,443 @@
+[
+  {
+    "id": "green_door_needs_key",
+    "description": "Green door opens only if green key is carried.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.GreenDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GreenKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "red_door_needs_key",
+    "description": "Red door opens only if red key is carried.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.RedDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.RedKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "blue_door_needs_key",
+    "description": "Blue door opens only if blue key is carried.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "var": "ActorStates.BlueDoor"
+              },
+              "open"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.BlueKey"
+              },
+              "present"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "green_door_opens_with_key",
+    "description": "Interacting next to green door while carrying green key opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GreenKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.GreenDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.GreenDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "red_door_opens_with_key",
+    "description": "Interacting next to red door while carrying red key opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.RedKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.RedDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.RedDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "blue_door_opens_with_key",
+    "description": "Interacting next to blue door while carrying blue key opens it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.BlueKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.BlueDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.BlueDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "coin_worth_one",
+    "description": "Collecting the coin adds 1 to inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.Coin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.Coin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              1
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gem_worth_three",
+    "description": "Collecting the gem bundle adds 3 to inventory.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GemBundle"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GemBundle"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              3
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "inventory_needs_loot",
+    "description": "Inventory count increases only when loot is collected.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            ">": [
+              {
+                "var": "InventoryCount"
+              },
+              {
+                "prev": "InventoryCount"
+              }
+            ]
+          },
+          {
+            "not": {
+              "or": [
+                {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "prev": "ActorStates.Coin"
+                        },
+                        "present"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "var": "ActorStates.Coin"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "prev": "ActorStates.GemBundle"
+                        },
+                        "present"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "var": "ActorStates.GemBundle"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "keys_not_loot",
+    "description": "Picking up keys does not change inventory count.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "or": [
+              {
+                "and": [
+                  {
+                    "==": [
+                      {
+                        "prev": "ActorStates.GreenKey"
+                      },
+                      "present"
+                    ]
+                  },
+                  {
+                    "==": [
+                      {
+                        "var": "ActorStates.GreenKey"
+                      },
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "and": [
+                  {
+                    "==": [
+                      {
+                        "prev": "ActorStates.RedKey"
+                      },
+                      "present"
+                    ]
+                  },
+                  {
+                    "==": [
+                      {
+                        "var": "ActorStates.RedKey"
+                      },
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "and": [
+                  {
+                    "==": [
+                      {
+                        "prev": "ActorStates.BlueKey"
+                      },
+                      "present"
+                    ]
+                  },
+                  {
+                    "==": [
+                      {
+                        "var": "ActorStates.BlueKey"
+                      },
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              0
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,363 @@
+{
+  "session": {
+    "started": "2026-10-31T15:09:35.157767",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 151,
+    "cost_usd": 0.1855,
+    "duration_s": 452.5
+  },
+  "findings": [
+    {
+      "title": "Death outside pit region at (2166, -357)",
+      "hypothesis": "Player died at X=2166 Y=-357 Z=11 which is outside pit (2350-2650,350-650) but PawnAlive became false. Outside pit player must never die.",
+      "invariant": "floor_solid_no_death_outside_pit",
+      "invariant_description": "Outside the pit region the player must never die.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "floor_solid_no_death_outside_pit",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane4.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Pit fall does not kill player",
+      "hypothesis": "Player at (2579,533,-417) inside pit X2350-2650 Y350-650 below floor Z<0 with PawnAlive true and bIsFalling true. Should have ended attempt but still alive.",
+      "invariant": "pit_ends_attempt",
+      "invariant_description": "Falling into the pit region and below the floor must end the attempt.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "pit_ends_attempt",
+        "confirmed": false,
+        "runs": [
+          false,
+          false,
+          false
+        ],
+        "reason": "bug reproduced in 0 of 3 runs"
+      },
+      "before": "shots/t002_lane1.png",
+      "after": "shots/t002.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Side door fails to open on interact",
+      "hypothesis": "After walk_to (156,-686) within 46cm of SideDoor (200,-700) and interact, ActorStates.SideDoor still 'closed' despite spec requiring open regardless of inventory.",
+      "invariant": "side_door_opens_on_interact",
+      "invariant_description": "Interacting with the side door from up close opens it regardless of inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_on_interact",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t003_swept.png",
+      "after": "shots/t004.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin only gives 1 instead of 5",
+      "hypothesis": "Walked to gold coin at 1500,0: GoldCoin went from present to missing but InventoryCount is 1 not 5, delta !=5 breaks gold_coin_worth_five despite auto-check saying holds",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "Picking up the gold coin adds exactly 5 to inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t006_reset.png",
+      "after": "shots/t008.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Death outside pit region at (2166, -357)",
+      "hypothesis": "Player died at X=2166 Y=-357 Z=11 which is outside pit (2350-2650,350-650) but PawnAlive became false. Outside pit player must never die.",
+      "invariant": "floor_solid_no_death_outside_pit",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t001_lane4.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t001.png"
+    },
+    {
+      "title": "Pit fall does not kill player",
+      "hypothesis": "Player at (2579,533,-417) inside pit X2350-2650 Y350-650 below floor Z<0 with PawnAlive true and bIsFalling true. Should have ended attempt but still alive.",
+      "invariant": "pit_ends_attempt",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": 535
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t002_lane1.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t002.png"
+    },
+    {
+      "title": "Side door fails to open on interact",
+      "hypothesis": "After walk_to (156,-686) within 46cm of SideDoor (200,-700) and interact, ActorStates.SideDoor still 'closed' despite spec requiring open regardless of inventory.",
+      "invariant": "side_door_opens_on_interact",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t003_swept.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t004.png"
+    },
+    {
+      "title": "Gold coin only gives 1 instead of 5",
+      "hypothesis": "Walked to gold coin at 1500,0: GoldCoin went from present to missing but InventoryCount is 1 not 5, delta !=5 breaks gold_coin_worth_five despite auto-check saying holds",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t006_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-150935/shots/t008.png"
+    }
+  ]
+}

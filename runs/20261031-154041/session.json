@@ -1,0 +1,209 @@
+{
+  "session": {
+    "started": "2026-10-31T15:40:41.880625",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 132,
+    "cost_usd": 0.2632,
+    "duration_s": 418.8
+  },
+  "findings": [
+    {
+      "title": "Blue door opened without key",
+      "hypothesis": "Walked to BlueDoor at (3500,0) and interacted without picking up BlueKey; state shows BlueDoor open while BlueKey present and inventory 0, so door opened without key.",
+      "invariant": "blue_door_never_open_without_key",
+      "invariant_description": "Blue door stays closed until blue key is picked up.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 3500,
+          "y": 0,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "blue_door_never_open_without_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t004_reset.png",
+      "after": "shots/t006.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gem bundle gave 1 instead of 3",
+      "hypothesis": "Walked to GemBundle at ~2000,300; state shows GemBundle missing and InventoryCount=1; expected increase of 3 from 0 to 3",
+      "invariant": "gem_bundle_worth_three",
+      "invariant_description": "Gem bundle adds exactly 3 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_bundle_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t010_reset.png",
+      "after": "shots/t012.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Blue door opened without key",
+      "hypothesis": "Walked to BlueDoor at (3500,0) and interacted without picking up BlueKey; state shows BlueDoor open while BlueKey present and inventory 0, so door opened without key.",
+      "invariant": "blue_door_never_open_without_key",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "look_at",
+          "x": 3500,
+          "y": 0,
+          "z": 150
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154041/shots/t004_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154041/shots/t006.png"
+    },
+    {
+      "title": "Gem bundle gave 1 instead of 3",
+      "hypothesis": "Walked to GemBundle at ~2000,300; state shows GemBundle missing and InventoryCount=1; expected increase of 3 from 0 to 3",
+      "invariant": "gem_bundle_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154041/shots/t010_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154041/shots/t012.png"
+    }
+  ]
+}

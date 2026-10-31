@@ -1,0 +1,180 @@
+{
+  "session": {
+    "started": "2026-10-31T16:16:34.332212",
+    "model": "",
+    "actions": 20,
+    "cost_usd": 0.0,
+    "duration_s": 88.5
+  },
+  "findings": [
+    {
+      "title": "gold_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_worth_five.",
+      "invariant": "gold_worth_five",
+      "invariant_description": "Collecting the gold coin adds exactly 5 to the inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_000_before.png",
+      "after": "shots/baseline_000_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "gold_walkover broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_walkover.",
+      "invariant": "gold_walkover",
+      "invariant_description": "The gold coin is collected only by walking over it.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        },
+        {
+          "action": "interact"
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_walkover",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_000_before.png",
+      "after": "shots/baseline_000_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "side_door_opens broken (scripted check)",
+      "hypothesis": "Scripted object SideDoor episode broke side_door_opens.",
+      "invariant": "side_door_opens",
+      "invariant_description": "Interacting next to the side door opens it with or without anything in their pockets.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 2.2133516482134197
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_002_before.png",
+      "after": "shots/baseline_002_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "gold_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_worth_five.",
+      "invariant": "gold_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161634/shots/baseline_000_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161634/shots/baseline_000_after.png"
+    },
+    {
+      "title": "gold_walkover broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_walkover.",
+      "invariant": "gold_walkover",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        },
+        {
+          "action": "interact"
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161634/shots/baseline_000_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161634/shots/baseline_000_after.png"
+    },
+    {
+      "title": "side_door_opens broken (scripted check)",
+      "hypothesis": "Scripted object SideDoor episode broke side_door_opens.",
+      "invariant": "side_door_opens",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 2.2133516482134197
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161634/shots/baseline_002_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161634/shots/baseline_002_after.png"
+    }
+  ]
+}

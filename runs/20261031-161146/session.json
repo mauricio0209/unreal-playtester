@@ -1,0 +1,62 @@
+{
+  "session": {
+    "started": "2026-10-31T16:11:46.579220",
+    "model": "",
+    "actions": 20,
+    "cost_usd": 0.0,
+    "duration_s": 55.6
+  },
+  "findings": [
+    {
+      "title": "gold_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_worth_five.",
+      "invariant": "gold_worth_five",
+      "invariant_description": "Gold coin adds exactly 5 to inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/baseline_000_before.png",
+      "after": "shots/baseline_000_after.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "gold_worth_five broken (scripted check)",
+      "hypothesis": "Scripted object ExitDoor episode broke gold_worth_five.",
+      "invariant": "gold_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 3500,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 6.833333333333333
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161146/shots/baseline_000_before.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-161146/shots/baseline_000_after.png"
+    }
+  ]
+}

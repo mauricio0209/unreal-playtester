@@ -1,0 +1,268 @@
+{
+  "session": {
+    "started": "2026-10-31T15:25:11.574567",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 150,
+    "cost_usd": 0.2008,
+    "duration_s": 445.3
+  },
+  "findings": [
+    {
+      "title": "Death outside pit on sweep lane y=-365",
+      "hypothesis": "Sweep at X=2166 Y=-357 Z=11 PawnAlive=false. This is outside pit x2350-2650 y350-650 yet player died, breaking no_death_outside_pit invariant. Screenshot shows floor/void view consistent with falling through geometry.",
+      "invariant": "no_death_outside_pit",
+      "invariant_description": "The player must never die outside the pit (x 2350-2650, y 350-650).",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "verdict": {
+        "invariant": "no_death_outside_pit",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t001_lane4.png",
+      "after": "shots/t001.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Side door fails to open on interact",
+      "hypothesis": "Walked to SideDoor at 200,-700 and interacted within 150cm; ActorStates.SideDoor remained 'closed' and screenshot shows wall, violating should-open invariant.",
+      "invariant": "side_door_opens_with_interact",
+      "invariant_description": "The side door opens when the player stands next to it and interacts, with or without inventory.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "side_door_opens_with_interact",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t004_swept.png",
+      "after": "shots/t005.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "Gold coin only gives 1 instead of 5",
+      "hypothesis": "Picked up GoldCoin at ~1500,0 and inventory went from 0 to 1, not 5; state shows GoldCoin missing and InventoryCount=1 confirming delta !=5",
+      "invariant": "gold_coin_worth_five",
+      "invariant_description": "The gold coin adds 5 to the inventory count.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 3.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gold_coin_worth_five",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t013_reset.png",
+      "after": "shots/t015.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "Death outside pit on sweep lane y=-365",
+      "hypothesis": "Sweep at X=2166 Y=-357 Z=11 PawnAlive=false. This is outside pit x2350-2650 y350-650 yet player died, breaking no_death_outside_pit invariant. Screenshot shows floor/void view consistent with falling through geometry.",
+      "invariant": "no_death_outside_pit",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": -465.77016895545904,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        },
+        {
+          "action": "move_to",
+          "x": 3455.8177515476486,
+          "y": -365
+        },
+        {
+          "action": "step",
+          "seconds": 2.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-152511/shots/t001_lane4.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-152511/shots/t001.png"
+    },
+    {
+      "title": "Side door fails to open on interact",
+      "hypothesis": "Walked to SideDoor at 200,-700 and interacted within 150cm; ActorStates.SideDoor remained 'closed' and screenshot shows wall, violating should-open invariant.",
+      "invariant": "side_door_opens_with_interact",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-152511/shots/t004_swept.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-152511/shots/t005.png"
+    },
+    {
+      "title": "Gold coin only gives 1 instead of 5",
+      "hypothesis": "Picked up GoldCoin at ~1500,0 and inventory went from 0 to 1, not 5; state shows GoldCoin missing and InventoryCount=1 confirming delta !=5",
+      "invariant": "gold_coin_worth_five",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 3.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-152511/shots/t013_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-152511/shots/t015.png"
+    }
+  ]
+}

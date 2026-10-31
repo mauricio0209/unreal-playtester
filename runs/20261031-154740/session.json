@@ -1,0 +1,225 @@
+{
+  "session": {
+    "started": "2026-10-31T15:47:40.884355",
+    "model": "meta-models/muse-spark-open-1026",
+    "actions": 154,
+    "cost_usd": 0.3014,
+    "duration_s": 426.1
+  },
+  "findings": [
+    {
+      "title": "GemBundle gave 1 instead of 3",
+      "hypothesis": "Inventory went from 1 to 2 after collecting GemBundle (delta 1) instead of expected delta 3, so invariant fails",
+      "invariant": "gem_bundle_worth_three",
+      "invariant_description": "GemBundle adds 3 to inventory when collected.",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "gem_bundle_worth_three",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t006_reset.png",
+      "after": "shots/t009.png",
+      "video_gif": null,
+      "video_mp4": null
+    },
+    {
+      "title": "RedDoor did not open when interacting while carrying RedKey",
+      "hypothesis": "Player picked up RedKey (now missing/null) and interacted within ~44cm of RedDoor at 2200,-700 but Objects.RedDoor.state remained 'closed' and screenshot shows closed wall, violating the requirement that it must open.",
+      "invariant": "red_door_opens_with_key",
+      "invariant_description": "Interacting with RedDoor up close while carrying RedKey must open it.",
+      "steps": [
+        {
+          "action": "step",
+          "seconds": 0.5
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "verdict": {
+        "invariant": "red_door_opens_with_key",
+        "confirmed": true,
+        "runs": [
+          true,
+          true,
+          true
+        ],
+        "reason": "bug reproduced in all 3 runs"
+      },
+      "before": "shots/t025_reset.png",
+      "after": "shots/t028.png",
+      "video_gif": null,
+      "video_mp4": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "title": "GemBundle gave 1 instead of 3",
+      "hypothesis": "Inventory went from 1 to 2 after collecting GemBundle (delta 1) instead of expected delta 3, so invariant fails",
+      "invariant": "gem_bundle_worth_three",
+      "steps": [
+        {
+          "action": "move_to",
+          "x": 1000,
+          "y": 500
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2000,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154740/shots/t006_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154740/shots/t009.png"
+    },
+    {
+      "title": "RedDoor did not open when interacting while carrying RedKey",
+      "hypothesis": "Player picked up RedKey (now missing/null) and interacted within ~44cm of RedDoor at 2200,-700 but Objects.RedDoor.state remained 'closed' and screenshot shows closed wall, violating the requirement that it must open.",
+      "invariant": "red_door_opens_with_key",
+      "steps": [
+        {
+          "action": "step",
+          "seconds": 0.5
+        },
+        {
+          "action": "move_to",
+          "x": 1500,
+          "y": 300
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "move_to",
+          "x": 2200,
+          "y": -700
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        },
+        {
+          "action": "interact"
+        },
+        {
+          "action": "step",
+          "seconds": 1.0
+        }
+      ],
+      "before": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154740/shots/t025_reset.png",
+      "after": "/mnt/c/UnrealProjects/unreal-playtester/runs/20261031-154740/shots/t028.png"
+    }
+  ]
+}
