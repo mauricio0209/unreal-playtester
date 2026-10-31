@@ -15,7 +15,9 @@ def _system_prompt() -> str:
         "Use object names exactly as they appear in the sample state. "
         "A check must be true only when the rule is broken, never during normal play. "
         "Do not write checks for things the document does not state. "
-        'Reply with exactly one JSON object {"checks": [...]} and nothing else.'
+        "Reply with one check per line, each line a complete JSON object "
+        '{"id": ..., "description": ..., "violation": ...}, and nothing else. '
+        "Count your closing brackets: every { and [ must be closed on the same line."
     )
     return ref + "\n\n" + instructions
 
@@ -30,6 +32,23 @@ def _user_message(design_text, state) -> str:
 
 
 def _extract_json(reply: str):
+    """Parse a reply: one check per line (preferred), or a single {"checks": [...]} object.
+
+    Returns (payload, errors): a malformed line only loses that check and its error is fed
+    back, instead of one stray bracket discarding the whole list."""
+    lines = [ln.strip().rstrip(",") for ln in reply.splitlines() if ln.strip().startswith("{")]
+    if len(lines) > 1 or (lines and '"checks"' not in lines[0]):
+        checks, errors = [], []
+        for n, line in enumerate(lines, 1):
+            try:
+                checks.append(json.loads(line))
+            except json.JSONDecodeError as exc:
+                errors.append((f"line {n}", f"invalid JSON ({exc}): {line[:120]}"))
+        return {"checks": checks}, errors
+    return _extract_object(reply), []
+
+
+def _extract_object(reply: str):
     start = reply.find("{")
     end = reply.rfind("}")
     if start < 0 or end < 0 or end <= start:
@@ -76,7 +95,7 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
         reply = llm.chat(messages, max_tokens=8000)
         messages.append({"role": "assistant", "content": reply})
         try:
-            raw = _extract_json(reply)
+            raw, line_errors = _extract_json(reply)
         except (ValueError, json.JSONDecodeError) as exc:
             new_valid: list[dict] = []
             rejected = [(None, f"unparseable reply: {exc}")]
@@ -84,12 +103,15 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
         else:
             try:
                 new_valid, rejected = _validate_checks(raw, validate)
+                rejected = line_errors + rejected
             except ValueError as exc:
                 new_valid = []
                 rejected = [(None, str(exc))]
                 parse_failed = True
             else:
                 parse_failed = False
+        for cid, err in rejected:
+            log(f"  rejected {cid}: {err}")
         if len(new_valid) >= len(best):
             best = new_valid
         if not parse_failed and not rejected and new_valid:
@@ -100,21 +122,20 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
             detail = "; ".join(f"{cid}: {err}" for cid, err in rejected)
             feedback = (
                 "Your reply could not be parsed or had no check list "
-                f"({detail}). Reply with the complete corrected list as exactly "
-                'one JSON object {"checks": [...]} and nothing else.'
+                f"({detail}). Reply with the complete corrected list, "
+                "one check per line as a complete JSON object, and nothing else."
             )
         elif not rejected:
             feedback = (
                 "Your reply contained no checks. Reply with the complete "
-                "corrected list as exactly "
-                'one JSON object {"checks": [...]} and nothing else.'
+                "corrected list, one check per line as a complete JSON object, and nothing else."
             )
         else:
             detail = "; ".join(f"{cid}: {err}" for cid, err in rejected)
             feedback = (
                 "Some checks were rejected "
-                f"({detail}). Reply with the complete corrected list as exactly "
-                'one JSON object {"checks": [...]} and nothing else.'
+                f"({detail}). Reply with the complete corrected list, "
+                "one check per line as a complete JSON object, and nothing else."
             )
         messages.append({"role": "user", "content": feedback})
     if not best:

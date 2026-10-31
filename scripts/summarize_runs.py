@@ -7,7 +7,10 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-REAL = {"no_fall_out_of_world", "door_opens", "pickup_counts"}  # door2 is intermittent
+# Vault seeded bugs: blue door opens without its key, red door ignores the red key, gem adds 1.
+# A confirmed check that names none of them (green door, coin, keys) is a false positive.
+VAULT_BUGS = [("blue", "vault_blue_door"), ("red", "vault_red_door"), ("gem", "vault_gem_value")]
+REAL = {"no_fall_out_of_world", "door_opens", "pickup_counts"} | {b for _, b in VAULT_BUGS}
 
 root = Path(sys.argv[1])
 rows = defaultdict(list)
@@ -17,6 +20,13 @@ for line in (root / (sys.argv[2] if len(sys.argv) > 2 else "runs/benchmark.txt")
     provider, run = line.split()
     d = json.loads((root / run / "session.json").read_text())
     confirmed = {f["invariant"] for f in d["findings"] if f["verdict"]["confirmed"]}
+    if (root / run / "checks.json").exists():  # Vault: ids are model-written, grade by object
+        # A check may cover several doors, so the finding's own words say which one broke.
+        confirmed = {next((bug for word, bug in VAULT_BUGS
+                           if word in f"{f.get('title', '')} {f.get('hypothesis', '')}".lower()),
+                          next((bug for word, bug in VAULT_BUGS if word in f["invariant"]),
+                               f["invariant"]))
+                     for f in d["findings"] if f["verdict"]["confirmed"]}
     flaky = [f["invariant"] for f in d["findings"]
              if not f["verdict"]["confirmed"] and 0 < sum(f["verdict"]["runs"]) < len(f["verdict"]["runs"])]
     rows[provider].append({

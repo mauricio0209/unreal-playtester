@@ -5,6 +5,7 @@ actually executed since the last level reset, so the verifier replays exactly wh
 """
 
 import json
+import math
 import shutil
 import time
 from pathlib import Path
@@ -25,6 +26,7 @@ history. Reply with exactly ONE JSON object and nothing else, in one of these sh
 "actions" holds 1 to 4 actions executed in order, e.g. a move_to followed by a step. A reset must be alone.
 
 Actions:
+{"type": "walk_to", "x": <cm>, "y": <cm>}  walk to a point and keep going until you arrive or are blocked (up to 12 s); prefer it to move_to + step
 {"type": "move_to", "x": <cm>, "y": <cm>}  walk in a straight line toward a point on the ground
 {"type": "look_at", "x": <cm>, "y": <cm>, "z": <cm>}  turn the camera toward a point
 {"type": "jump"}
@@ -104,6 +106,10 @@ def to_step(action):
     kind = action.get("type") if isinstance(action, dict) else None
     if kind == "reset":
         return None
+    if kind == "walk_to":  # expanded into move_to + steps when executed (see _walk_to)
+        step = {"action": "move_to", "x": action.get("x"), "y": action.get("y")}
+        verifier._validate_steps([step])
+        return dict(step, action="walk_to")
     if kind not in ACTION_KEYS:
         raise ValueError(f"unknown action type {kind!r}")
     step = {"action": kind, **{k: action.get(k) for k in ACTION_KEYS[kind]}}
@@ -121,6 +127,25 @@ def _do(ue, step):
         return ue.step(step["seconds"])
     getattr(ue, kind)(*(step[k] for k in ACTION_KEYS[kind]))
     return ue.state()
+
+
+def _walk_to(ue, step, chunk_s=1.0, max_s=12.0, arrive_cm=100.0, stuck_cm=20.0):
+    """Run a walk_to as concrete move_to + step actions; return the executed (step, state)
+    pairs, so the repro the verifier replays is exactly what happened."""
+    move = {"action": "move_to", "x": step["x"], "y": step["y"]}
+    state = _do(ue, move)
+    done = [(move, state)]
+    for _ in range(int(max_s / chunk_s)):
+        before = state["PlayerLocation"]
+        tick = {"action": "step", "seconds": chunk_s}
+        state = _do(ue, tick)
+        done.append((tick, state))
+        loc = state["PlayerLocation"]
+        if (not state.get("PawnAlive", True)
+                or math.hypot(loc["X"] - step["x"], loc["Y"] - step["y"]) <= arrive_cm
+                or math.hypot(loc["X"] - before["X"], loc["Y"] - before["Y"]) < stuck_cm):
+            break
+    return done
 
 
 def _shot(ue, shots_dir, name):
@@ -252,7 +277,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
             log(f"turn {turn}: invalid reply: {e}")
             continue
 
-        actions += len(steps)
+        actions += steps == [None]  # executed actions are counted as they run
         if {h["invariant"] for h in hypotheses} >= {i["id"] for i in spec["invariants"]}:
             log(f"every invariant filed after {turn} turns")
             break
@@ -266,9 +291,11 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                 history.append(f"t{turn}: reset")
             continue
         for step in steps:
-            state = _do(ue, step)
-            episode.append(step)
-            trace.append({"action": step, "state": state})
+            for done, state in (_walk_to(ue, step) if step["action"] == "walk_to"
+                                else [(step, _do(ue, step))]):
+                episode.append(done)
+                trace.append({"action": done, "state": state})
+                actions += 1
         fired = [i for i in _holding(trace, spec) if i not in hinted and i not in
                  {h["invariant"] for h in hypotheses}]
         hinted.update(fired)

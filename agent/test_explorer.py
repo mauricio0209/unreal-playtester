@@ -156,6 +156,18 @@ def t_done_ends_and_holding_checks_are_hinted_once():
     assert "Automatic check" not in texts[2], texts[2]  # hinted once per attempt
 
 
+def t_walk_to_expands_into_replayable_steps():
+    out, ue, _ = run([
+        '{"actions": [{"type": "walk_to", "x": 2000, "y": 0}]}',  # fake pawn stops at x=500
+        '{"bug": {"invariant": "door_opens", "title": "t", "hypothesis": "h"}}',
+    ], turns=2)
+    [h] = out["hypotheses"]
+    assert h["steps"] == [{"action": "move_to", "x": 2000, "y": 0},
+                          {"action": "step", "seconds": 1.0},
+                          {"action": "step", "seconds": 1.0}], h["steps"]  # blocked: stopped
+    assert out["actions"] == 4, out  # 3 executed + the reset after filing
+
+
 def t_sweep_hands_falls_to_model():
     spec = {"level": {"walkable_area": {"min": {"X": -100, "Y": -300}, "max": {"X": 1100, "Y": 300}}},
             "invariants": [{"id": "no_fall", "description": "d", "predicate": "fell_out_of_world",

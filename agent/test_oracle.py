@@ -68,7 +68,8 @@ def t_invalid_check_retried_with_feedback():
         [payload("good", "bad"), payload("good", "fixed")],
         validate=reject("bad", msg="unknown operator 'whenever'"))
     assert [c["id"] for c in out] == ["good", "fixed"]
-    assert len(llm.seen) == 2 and len(logs) == 2
+    assert len(llm.seen) == 2 and sum(l.startswith("attempt") for l in logs) == 2
+    assert any("rejected bad: unknown operator" in l for l in logs), logs
     feedback = llm.seen[1][-1]["content"]
     assert "bad" in feedback and "unknown operator 'whenever'" in feedback, feedback
     assert llm.seen[1][-2]["content"] == payload("good", "bad")  # reply kept
@@ -81,6 +82,15 @@ def t_worse_retry_keeps_better_result():
     assert [c["id"] for c in out] == ["a", "b"], out
 
 
+def t_one_check_per_line_isolates_a_bad_bracket():
+    good = json.dumps(check("good"))
+    broken = json.dumps(check("broken"))[:-1]  # the model dropped a closing brace
+    out, llm, _ = run([f"{good}\n{broken}", f"{good}\n{json.dumps(check('broken'))}"])
+    assert [c["id"] for c in out] == ["good", "broken"], out
+    feedback = llm.seen[1][-1]["content"]
+    assert "line 2" in feedback and "invalid JSON" in feedback, feedback
+
+
 def t_unparseable_until_attempts_out_raises():
     llm, logs = FakeLLM(["no json here", "still { not json", "{oops"]), []
     try:
@@ -90,7 +100,7 @@ def t_unparseable_until_attempts_out_raises():
         pass
     else:
         raise AssertionError("expected ValueError")
-    assert len(llm.seen) == 3 and len(logs) == 3
+    assert len(llm.seen) == 3 and sum(l.startswith("attempt") for l in logs) == 3
 
 
 def t_duplicate_ids_first_wins():
