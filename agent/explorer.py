@@ -39,7 +39,9 @@ from your actions since the last reset. Then the level resets for you.
 - Use the state JSON, not only the image: it is ground truth for position, inventory and object states.
 - Anything the spec lists under "intentional" is by design and is NOT a bug.
 - Work in two phases. Phase 1: exercise every object listed in Objects (walk into pickups, \
-interact with doors from up close) and file what breaks. Phase 2: sweep the walkable area hall by \
+interact with doors from up close) and file what breaks. Test each object in its own attempt: \
+if an object works, reset before going to the next one, so every repro involves only one object \
+and cannot depend on what another object did. Phase 2: sweep the walkable area hall by \
 hall in parallel lanes about 200 cm apart, through the middle of each hall and the strips between \
 areas, not only along the walls. Level geometry can be broken anywhere.
 - Bugs you already filed are listed each turn. Never file the same invariant twice: spend your \
