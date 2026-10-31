@@ -99,9 +99,17 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
         import explorer as explorer_mod
 
     spec = verifier_mod.load_spec(str(HERE / "spec.json"))
+    log_file = (run_dir / "explore.log").open("w", encoding="utf-8")
+
+    def log(line):
+        print(line)
+        log_file.write(line + "\n")
+        log_file.flush()
+
     result = explorer_mod.explore(ue, client, spec, shots_dir,
                                  max_turns=int(args.turns),
-                                 deadline_s=deadline_s)
+                                 deadline_s=deadline_s, log=log)
+    log_file.close()
 
     hypotheses = result.get("hypotheses", []) or []
     actions = result.get("actions", 0)
@@ -142,7 +150,7 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
         cost = 0.0
     session_info = {"started": start_dt.isoformat(), "model": model_name,
                     "actions": actions, "cost_usd": cost,
-                    "duration_s": duration_s}
+                    "duration_s": round(duration_s, 1)}
 
     report_path = report_mod.write_report(run_dir, session_info, findings)
     session_doc = {"session": session_info, "findings": findings,

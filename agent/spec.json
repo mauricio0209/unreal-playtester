@@ -1,4 +1,17 @@
 {
+  "level": {
+    "description": "Three halls in a row along +X, enclosed by walls. The player starts at (0, 0).",
+    "walkable_area": {
+      "min": {
+        "X": -500,
+        "Y": -1000
+      },
+      "max": {
+        "X": 5000,
+        "Y": 1000
+      }
+    }
+  },
   "invariants": [
     {
       "id": "no_fall_out_of_world",
@@ -10,20 +23,34 @@
       "id": "door_opens",
       "description": "Interacting with Door1 while standing within 150 cm of it must open the door. If the door is still not open after a later step, the interaction is broken.",
       "predicate": "door_stays_closed_after_interact",
-      "params": {"door": "Door1", "radius": 150}
+      "params": {
+        "door": "Door1",
+        "radius": 150
+      }
     },
     {
       "id": "pickup_counts",
       "description": "Collecting Pickup1 (it disappears from the world) must increase InventoryCount. If it is gone but the count is unchanged since it was last present, the pickup was lost.",
       "predicate": "pickup_not_counted",
-      "params": {"pickup": "Pickup1"}
+      "params": {
+        "pickup": "Pickup1"
+      }
     }
   ],
   "intentional": [
     {
       "id": "decoy_pit",
       "description": "The visible open pit in the middle hall is an intentional hazard; falling into it is expected. The region is the 200x200 cm pit plus a 50 cm capsule-radius margin.",
-      "region": {"min": {"X": 2350, "Y": 350}, "max": {"X": 2650, "Y": 650}}
+      "region": {
+        "min": {
+          "X": 2350,
+          "Y": 350
+        },
+        "max": {
+          "X": 2650,
+          "Y": 650
+        }
+      }
     }
   ]
 }

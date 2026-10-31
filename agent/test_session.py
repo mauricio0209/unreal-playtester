@@ -104,7 +104,7 @@ class FakeExplorer:
         self.calls = []
 
     def explore(self, ue, llm_client, spec, shots_dir, max_turns=40,
-                deadline_s=360.0):
+                deadline_s=360.0, log=print):
         self.calls.append({"ue": ue, "llm": llm_client, "spec": spec,
                            "shots_dir": Path(shots_dir),
                            "max_turns": max_turns, "deadline_s": deadline_s})
