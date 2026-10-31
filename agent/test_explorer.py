@@ -138,6 +138,24 @@ def t_screenshot_sent_every_turn():
         assert img["image_url"]["url"].startswith("data:image/png;base64,"), img
 
 
+def t_done_ends_and_holding_checks_are_hinted_once():
+    spec = {"invariants": [{"id": "moved_east", "description": "d", "predicate": "dsl",
+                            "params": {"expr": {"ever": {">": [{"var": "PlayerLocation.X"}, 100]}}}},
+                           {"id": "never", "description": "d", "predicate": "dsl",
+                            "params": {"expr": False}}], "intentional": []}
+    with tempfile.TemporaryDirectory() as tmp:
+        ue = FakeUE(tmp)
+        llm = FakeLLM(['{"actions": [{"type": "move_to", "x": 500, "y": 0}, {"type": "step", "seconds": 1}]}',
+                       '{"actions": [{"type": "step", "seconds": 1}]}',
+                       '{"thought": "all tested", "done": "both invariants"}',
+                       '{"actions": [{"type": "step", "seconds": 1}]}'])
+        explorer.explore(ue, llm, spec, Path(tmp) / "shots", max_turns=10, log=lambda *_: None)
+    texts = [m[1]["content"][0]["text"] for m in llm.seen]
+    assert len(texts) == 3, texts  # "done" stopped the session before the 4th reply
+    assert "Automatic check: moved_east holds" in texts[1], texts[1]
+    assert "Automatic check" not in texts[2], texts[2]  # hinted once per attempt
+
+
 def t_sweep_hands_falls_to_model():
     spec = {"level": {"walkable_area": {"min": {"X": -100, "Y": -300}, "max": {"X": 1100, "Y": 300}}},
             "invariants": [{"id": "no_fall", "description": "d", "predicate": "fell_out_of_world",

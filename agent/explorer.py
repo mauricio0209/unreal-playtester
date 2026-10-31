@@ -20,6 +20,7 @@ history. Reply with exactly ONE JSON object and nothing else, in one of these sh
 
 {"thought": "<one short sentence>", "actions": [<action>, ...]}
 {"thought": "<one short sentence>", "bug": {"invariant": "<invariant id>", "title": "<short title>", "hypothesis": "<what you observed and why it breaks the invariant>"}}
+{"thought": "<one short sentence>", "done": "<what you tested>"}  end the session: only once every invariant has been tested
 
 "actions" holds 1 to 4 actions executed in order, e.g. a move_to followed by a step. A reset must be alone.
 
@@ -47,6 +48,8 @@ own attempt: reset before starting the next one, so every repro holds only the a
 invariant needs (an invariant may need a sequence, like picking something up before using \
 something else). Try both what should work and what should not. When every invariant is done, \
 explore what straight lanes could miss.
+- After every turn the invariants are also checked automatically on the current attempt. When \
+one holds you are told: confirm it with your own observation and file it, or say why not.
 - Bugs you already filed are listed each turn. Never file the same invariant twice: spend your \
 remaining turns finding different bugs.
 - If PawnAlive is false the player is gone: file a bug if it is one, otherwise reset.
@@ -84,9 +87,11 @@ def parse_reply(text):
     if start < 0 or end <= start:
         raise ValueError("no JSON object in reply")
     reply = json.loads(text[start:end + 1])
-    if not isinstance(reply, dict) or ("actions" in reply or "action" in reply) == ("bug" in reply):
-        raise ValueError("reply must contain exactly one of 'actions' or 'bug'")
-    if "bug" not in reply:
+    kinds = ("actions" in reply or "action" in reply) + ("bug" in reply) + ("done" in reply) \
+        if isinstance(reply, dict) else 0
+    if kinds != 1:
+        raise ValueError("reply must contain exactly one of 'actions', 'bug' or 'done'")
+    if "bug" not in reply and "done" not in reply:
         actions = reply.pop("actions", None) or [reply.pop("action", None)]
         if not isinstance(actions, list) or not 1 <= len(actions) <= 4:
             raise ValueError("'actions' must be a list of 1 to 4 actions")
@@ -124,6 +129,19 @@ def _shot(ue, shots_dir, name):
     return path
 
 
+def _holding(trace, spec):
+    """Invariant ids whose predicate holds on this attempt's trace."""
+    held = []
+    for inv in spec.get("invariants", []):
+        predicate = verifier.PREDICATES.get(inv.get("predicate"))
+        try:
+            if predicate and predicate(trace, inv.get("params", {}) or {}, spec):
+                held.append(inv["id"])
+        except Exception:  # a hint is best effort; the verifier decides later
+            continue
+    return held
+
+
 def sweep_lanes(spec, spacing=200, margin=100, chunk_s=2.0, speed=600):
     """Scripted coverage: one straight lane along X per Y row of the walkable area.
 
@@ -153,6 +171,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
     hypotheses, history, episode, filed = [], [], [], []
     actions = 0
     state = ue.reset()
+    trace, hinted = [{"action": None, "state": state}], set()
     known = set(state["ActorStates"])
     before = _shot(ue, shots_dir, "t000")
     note = "Fresh level load."
@@ -165,11 +184,13 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
         while lanes and not fell(state) and time.monotonic() - started <= deadline_s:
             lane = lanes.pop(0)
             state, episode = ue.reset(), []
+            trace, hinted = [{"action": None, "state": state}], set()
             known = set(state["ActorStates"])
             before = _shot(ue, shots_dir, f"t{turn:03d}_lane{len(lanes)}")
             for step in lane:
                 state = _do(ue, step)
                 episode.append(step)
+                trace.append({"action": step, "state": state})
                 actions += 1
                 if fell(state):
                     break
@@ -181,6 +202,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                         "this breaks an invariant, otherwise reset.")
             elif not lanes:  # sweep done: object repros must not carry a lane's steps
                 state, episode = ue.reset(), []
+                trace, hinted = [{"action": None, "state": state}], set()
                 known = set(state["ActorStates"])
                 before = _shot(ue, shots_dir, f"t{turn:03d}_swept")
                 note = "Scripted sweep finished. Level was reset."
@@ -198,6 +220,9 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
                                                       image_part(shot)]}])
         try:
             reply = parse_reply(text)
+            if "done" in reply:
+                log(f"turn {turn}: done: {str(reply['done'])[:120]}")
+                break
             if "bug" in reply:
                 bug = reply["bug"]
                 steps_done = [i for i, s in enumerate(episode) if s["action"] == "step"]
@@ -233,6 +258,7 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
             break
         if steps == [None]:  # bug filed or explicit reset: start a fresh episode
             state, episode = ue.reset(), []
+            trace, hinted = [{"action": None, "state": state}], set()
             known = set(state["ActorStates"])
             before = _shot(ue, shots_dir, f"t{turn:03d}_reset")
             note = "Level was reset."
@@ -242,7 +268,12 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
         for step in steps:
             state = _do(ue, step)
             episode.append(step)
-        note = ""
+            trace.append({"action": step, "state": state})
+        fired = [i for i in _holding(trace, spec) if i not in hinted and i not in
+                 {h["invariant"] for h in hypotheses}]
+        hinted.update(fired)
+        note = (f"Automatic check: {', '.join(fired)} holds on this attempt. File it if what you "
+                "see confirms it." if fired else "")
         loc = _round(state["PlayerLocation"])
         history.append(f"t{turn}: {json.dumps(steps)} -> at {loc}, alive={state['PawnAlive']}, "
                        f"inventory={state['InventoryCount']}, "
