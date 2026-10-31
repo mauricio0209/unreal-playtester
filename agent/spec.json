@@ -1,0 +1,29 @@
+{
+  "invariants": [
+    {
+      "id": "no_fall_out_of_world",
+      "description": "The player pawn must never die or fall below KillZ, except when falling into a region the design marks as intentional. A fall anywhere else is a level geometry bug.",
+      "predicate": "fell_out_of_world",
+      "params": {}
+    },
+    {
+      "id": "door_opens",
+      "description": "Interacting with Door1 while standing within 150 cm of it must open the door. If the door is still not open after a later step, the interaction is broken.",
+      "predicate": "door_stays_closed_after_interact",
+      "params": {"door": "Door1", "radius": 150}
+    },
+    {
+      "id": "pickup_counts",
+      "description": "Collecting Pickup1 (it disappears from the world) must increase InventoryCount. If it is gone but the count is unchanged since it was last present, the pickup was lost.",
+      "predicate": "pickup_not_counted",
+      "params": {"pickup": "Pickup1"}
+    }
+  ],
+  "intentional": [
+    {
+      "id": "decoy_pit",
+      "description": "A pit the design wants players to fall into.",
+      "region": {"min": {"X": 0, "Y": 0}, "max": {"X": 0, "Y": 0}}
+    }
+  ]
+}
