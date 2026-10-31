@@ -14,6 +14,9 @@ def _system_prompt() -> str:
         "can be observed in the game state. "
         "Use object names exactly as they appear in the sample state. "
         "A check must be true only when the rule is broken, never during normal play. "
+        "Most rules have two sides: what must happen (an action must have its effect) and "
+        "what must never happen (the effect without its condition). Write a separate check "
+        "for each side, or a broken rule can go unreported. "
         "Do not write checks for things the document does not state. "
         "Reply with one check per line, each line a complete JSON object "
         '{"id": ..., "description": ..., "violation": ...}, and nothing else. '

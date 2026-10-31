@@ -51,6 +51,16 @@ A locked door must not open while its key is still in the world:
                                 {"==": [{"var": "ActorStates.IronKey"}, "present"]}]}}}
 ```
 
+The other side of the same rule: interacting with the gate from up close while carrying the
+key must open it:
+
+```json
+{"id": "gate_opens_with_key", "description": "With the iron key, interacting with the iron gate opens it.",
+ "violation": {"after": [{"and": [{"did": "interact"}, {"==": [{"var": "ActorStates.IronKey"}, null]},
+                                  {"<": [{"dist": ["PlayerLocation", "ActorLocations.IronGate"]}, 150]}]},
+                         {"==": [{"var": "ActorStates.IronGate"}, "closed"]}]}}
+```
+
 Collecting an apple must add exactly 1 to the inventory:
 
 ```json
