@@ -7,7 +7,7 @@ import urllib.error
 import urllib.request
 
 BASE_URL = os.environ.get("UE_RC_URL", "http://127.0.0.1:30010")
-HARNESS_PATH = os.environ.get("UE_HARNESS_PATH", "/Game/Maps/UEDPIE_0_Arena.Arena:PersistentLevel.BP_TestHarness")
+HARNESS_PATH = os.environ.get("UE_HARNESS_PATH", "/Game/Maps/UEDPIE_0_Arena.Arena:PersistentLevel.BP_TestHarness_C_0")
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # RC is localhost: bypass proxy
 
 
