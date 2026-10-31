@@ -83,10 +83,46 @@ def _validate_checks(raw, validate):
     return valid, rejected
 
 
+def _paths(expr):
+    """Every state path an expression reads."""
+    if isinstance(expr, dict):
+        for op, arg in expr.items():
+            if op in ("var", "prev", "first"):
+                yield arg
+            elif op == "dist":
+                yield from arg
+            else:
+                yield from _paths(arg)
+    elif isinstance(expr, list):
+        for item in expr:
+            yield from _paths(item)
+
+
+def guard(check, state):
+    """Reject a valid check that is still likely wrong; the message goes back to the model.
+
+    The verifier only proves a check fires reproducibly, not that it is right, so a check
+    reading a misspelled name (always null) or already firing on a fresh level load would
+    become a confirmed false positive."""
+    import checks
+
+    for path in _paths(check["violation"]):
+        if checks._lookup_path(state, path) is None:
+            names = ", ".join(sorted((state.get("ActorStates") or {})))
+            raise ValueError(f"path {path!r} does not exist in the game state (objects: {names})")
+    if checks.evaluate([{"action": None, "state": state}], check["violation"]):
+        raise ValueError("it already fires on a fresh level load, before the player does "
+                         "anything, so it cannot tell a bug from normal play")
+
+
 def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) -> list[dict]:
     """Ask the model for checks, retrying rejected ones. See tasks/oracle.md."""
     if validate is None:
-        from checks import validate as validate
+        import checks
+
+        def validate(check):
+            checks.validate(check)
+            guard(check, state)
     system = _system_prompt()
     messages = [
         {"role": "system", "content": system},

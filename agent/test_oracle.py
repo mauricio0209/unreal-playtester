@@ -142,6 +142,35 @@ def t_system_prompt_contains_reference():
     assert DESIGN in user and json.dumps(STATE) in user
 
 
+def t_guard_rejects_unknown_paths_and_checks_firing_at_load():
+    state = {"InventoryCount": 0, "PlayerLocation": {"X": 0, "Y": 0, "Z": 90},
+             "ActorStates": {"Gate": "closed", "Gem": "present"},
+             "ActorLocations": {"Gate": {"X": 1, "Y": 2, "Z": 3}}}
+    ok = check("gem_counted", {"ever": {"and": [{"==": [{"prev": "ActorStates.Gem"}, "present"]},
+                                                {"==": [{"var": "ActorStates.Gem"}, None]}]}})
+    oracle.guard(ok, state)
+    oracle.guard(check("near", {"<": [{"dist": ["PlayerLocation", "ActorLocations.Gate"]}, 1]}), state)
+    for bad, words in ((check("typo", {"!=": [{"var": "ActorStates.Gaet"}, "closed"]}), "Gaet"),
+                       (check("loc", {"<": [{"dist": ["PlayerLocation", "ActorLocations.Gem"]}, 9]}),
+                        "ActorLocations.Gem"),
+                       (check("at_load", {"ever": {"==": [{"var": "ActorStates.Gate"}, "closed"]}}),
+                        "fresh level load")):
+        try:
+            oracle.guard(bad, state)
+        except ValueError as exc:
+            assert words in str(exc), exc
+        else:
+            raise AssertionError(f"{bad['id']} should be rejected")
+
+
+def t_default_validator_applies_the_guard():
+    state = {"ActorStates": {"Gate": "closed"}}
+    llm = FakeLLM([json.dumps(check("typo", {"==": [{"var": "ActorStates.Gaet"}, "open"]})) + "\n" +
+                   json.dumps(check("ok", {"==": [{"var": "ActorStates.Gate"}, "open"]}))])
+    out = oracle.write_checks(llm, DESIGN, state, log=lambda *_: None, attempts=1)
+    assert [c["id"] for c in out] == ["ok"], out
+
+
 def main():
     tests = sorted((n, f) for n, f in globals().items() if n.startswith("t_"))
     for name, fn in tests:
