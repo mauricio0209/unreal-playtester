@@ -62,7 +62,7 @@ def _invariant_descriptions(spec):
 
 
 def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
-         run_root=None):
+         run_root=None, video_mod=None):
     parser = argparse.ArgumentParser(description="Run a playtest session.")
     parser.add_argument("--provider", default="meta",
                         choices=("meta", "baseten"))
@@ -71,6 +71,8 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
                         help="reasoning_effort sent to the model ('' to omit)")
     parser.add_argument("--turns", type=int, default=DEFAULT_TURNS)
     parser.add_argument("--minutes", type=float, default=DEFAULT_MINUTES)
+    parser.add_argument("--no-video", action="store_true",
+                        help="skip replay videos for confirmed bugs")
     args = parser.parse_args(argv)
 
     deadline_s = float(args.minutes) * 60.0 * EXPLORATION_SHARE
@@ -100,6 +102,8 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     import report as report_mod
     if explorer_mod is None:
         import explorer as explorer_mod
+    if video_mod is None:
+        import replay_video as video_mod
 
     spec = verifier_mod.load_spec(str(HERE / "spec.json"))
     log_file = (run_dir / "explore.log").open("w", encoding="utf-8")
@@ -112,7 +116,6 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     result = explorer_mod.explore(ue, client, spec, shots_dir,
                                  max_turns=int(args.turns),
                                  deadline_s=deadline_s, log=log)
-    log_file.close()
 
     hypotheses = result.get("hypotheses", []) or []
     actions = result.get("actions", 0)
@@ -143,7 +146,32 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
             "verdict": verdict,
             "before": _rel_to_run_dir(hypothesis.get("before"), run_dir),
             "after": _rel_to_run_dir(hypothesis.get("after"), run_dir),
+            "video_gif": None,
+            "video_mp4": None,
         })
+
+    if not args.no_video:
+        videos_dir = run_dir / "videos"
+        bug_index = 0
+        for finding in findings:
+            if not (finding.get("verdict") or {}).get("confirmed"):
+                continue
+            bug_index += 1
+            name = f"bug{bug_index}"
+            try:
+                result = video_mod.record(
+                    ue, finding.get("steps", []), videos_dir, name)
+            except Exception as exc:
+                log(f"video recording failed for {name}: {exc}")
+                finding["video_gif"] = None
+                finding["video_mp4"] = None
+                continue
+            finding["video_gif"] = _rel_to_run_dir(result.get("gif"),
+                                                   run_dir)
+            finding["video_mp4"] = _rel_to_run_dir(result.get("mp4"),
+                                                   run_dir)
+
+    log_file.close()
 
     duration_s = time.monotonic() - monotonic_start
     model_name = getattr(client, "model", None) or args.model or ""

@@ -173,6 +173,28 @@ def t_file_written_under_run_dir():
         assert "# Session report" in path.read_text(encoding="utf-8")
 
 
+def t_replay_lines_present():
+    with tempfile.TemporaryDirectory() as tmp:
+        finding = sample_finding(video_gif="videos/bug1.gif",
+                                 video_mp4="videos/bug1.mp4")
+        path = report.write_report(tmp, sample_session(), [finding])
+        text = Path(path).read_text(encoding="utf-8")
+        assert "![Replay](videos/bug1.gif)" in text, text
+        assert "[Replay video (MP4)](videos/bug1.mp4)" in text, text
+        assert text.index("Press Interact") < text.index("![Replay]"), text
+
+
+def t_replay_lines_absent_without_video():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = report.write_report(tmp, sample_session(), [sample_finding()])
+        text = Path(path).read_text(encoding="utf-8")
+        assert "Replay" not in text, text
+        finding = sample_finding(video_gif=None, video_mp4=None)
+        path = report.write_report(tmp, sample_session(), [finding])
+        text = Path(path).read_text(encoding="utf-8")
+        assert "Replay" not in text, text
+
+
 def main():
     tests = sorted(
         [(name, fn) for name, fn in globals().items()

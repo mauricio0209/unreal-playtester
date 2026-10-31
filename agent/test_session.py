@@ -200,8 +200,10 @@ def t_duplicate_skipping():
         assert verdict["runs"] == [], verdict
         assert verdict["reason"] == "duplicate of a confirmed bug", verdict
         # 3 resets for the first hypothesis, 0 for the duplicate,
-        # 1 (then ue raises) for the ValueError one, 3 for the last one.
-        assert ue.resets == 7, ue.resets
+        # 1 (then ue raises) for the ValueError one, 3 for the last one,
+        # plus 1 for the replay video of the single confirmed finding
+        # (which fails gracefully here: the fake ue has no screenshot).
+        assert ue.resets == 8, ue.resets
     finally:
         tmp.cleanup()
 
@@ -292,6 +294,97 @@ def t_prints_report_and_summary():
     tmp, run_dir, ue, client, explorer, out, rc = run_session()
     try:
         assert str(run_dir / "report.md") in out, out
+        assert "1 confirmed" in out, out
+    finally:
+        tmp.cleanup()
+
+
+class FakeVideo:
+    def __init__(self):
+        self.calls = []
+
+    def record(self, ue, steps, out_dir, name, chunk_s=0.2, fps=10):
+        self.calls.append({"ue": ue, "steps": list(steps),
+                           "out_dir": Path(out_dir), "name": name})
+        out_dir = Path(out_dir)
+        return {"mp4": out_dir / f"{name}.mp4",
+                "gif": out_dir / f"{name}.gif", "frames": 2}
+
+
+class RaisingVideo:
+    def record(self, *args, **kwargs):
+        raise RuntimeError("ffmpeg blew up")
+
+
+def run_session_with_video(argv=None, video_mod=None, actions=9):
+    tmp = tempfile.TemporaryDirectory()
+    ue = make_ue()
+    client = make_client()
+    explorer = FakeExplorer(actions=actions)
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        rc = session.main(argv=[] if argv is None else argv, ue=ue,
+                          client=client, explorer_mod=explorer, now=NOW,
+                          run_root=tmp.name, video_mod=video_mod)
+    run_dir = Path(tmp.name) / "runs" / STAMP
+    return tmp, run_dir, ue, client, explorer, buf.getvalue(), rc
+
+
+def t_videos_for_confirmed_only():
+    video = FakeVideo()
+    tmp, run_dir, ue, client, explorer, out, rc = run_session_with_video(
+        video_mod=video)
+    try:
+        assert rc == 0, rc
+        assert len(video.calls) == 1, video.calls
+        call = video.calls[0]
+        assert call["ue"] is ue, call
+        assert call["name"] == "bug1", call
+        assert call["out_dir"] == run_dir / "videos", call
+        assert call["steps"] == [{"action": "step", "seconds": 1.0}], call
+        doc = json.loads((run_dir / "session.json").read_text(
+            encoding="utf-8"))
+        first = doc["findings"][0]
+        assert first["video_gif"] == "videos/bug1.gif", first
+        assert first["video_mp4"] == "videos/bug1.mp4", first
+        assert not Path(first["video_gif"]).is_absolute()
+        assert not Path(first["video_mp4"]).is_absolute()
+        for finding in doc["findings"][1:]:
+            assert finding["video_gif"] is None, finding
+            assert finding["video_mp4"] is None, finding
+        text = (run_dir / "report.md").read_text(encoding="utf-8")
+        assert "videos/bug1.gif" in text, text
+    finally:
+        tmp.cleanup()
+
+
+def t_no_video_skips_recording():
+    video = FakeVideo()
+    tmp, run_dir, ue, client, explorer, out, rc = run_session_with_video(
+        argv=["--no-video"], video_mod=video)
+    try:
+        assert rc == 0, rc
+        assert video.calls == [], video.calls
+        doc = json.loads((run_dir / "session.json").read_text(
+            encoding="utf-8"))
+        for finding in doc["findings"]:
+            assert finding["video_gif"] is None, finding
+            assert finding["video_mp4"] is None, finding
+        assert (run_dir / "report.md").is_file()
+    finally:
+        tmp.cleanup()
+
+
+def t_video_failure_still_reports():
+    tmp, run_dir, ue, client, explorer, out, rc = run_session_with_video(
+        video_mod=RaisingVideo())
+    try:
+        assert rc == 0, rc
+        assert (run_dir / "report.md").is_file()
+        doc = json.loads((run_dir / "session.json").read_text(
+            encoding="utf-8"))
+        assert doc["findings"][0]["video_gif"] is None
+        assert doc["findings"][0]["video_mp4"] is None
         assert "1 confirmed" in out, out
     finally:
         tmp.cleanup()

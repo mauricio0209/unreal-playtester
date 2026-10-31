@@ -79,6 +79,14 @@ def _finding_section(finding: dict) -> list[str]:
     for i, step in enumerate(finding.get("steps", []), start=1):
         lines.append(f"{i}. {describe_step(step)}")
     lines.append("")
+    video_gif = finding.get("video_gif")
+    video_mp4 = finding.get("video_mp4")
+    if video_gif:
+        lines.append(f"![Replay]({video_gif})")
+        lines.append("")
+        if video_mp4:
+            lines.append(f"[Replay video (MP4)]({video_mp4})")
+            lines.append("")
     before = finding.get("before")
     after = finding.get("after")
     if before:
