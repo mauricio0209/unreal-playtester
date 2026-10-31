@@ -36,9 +36,9 @@ class _Handler(http.server.BaseHTTPRequestHandler):
             "body": body,
         })
         if _Handler.responses:
-            status, payload = _Handler.responses.pop(0)
+            status, payload, *extra = _Handler.responses.pop(0)
         else:
-            status, payload = (200, ok_payload())
+            status, payload, extra = 200, ok_payload(), []
         if isinstance(payload, dict):
             data = json.dumps(payload).encode()
         else:
@@ -47,6 +47,8 @@ class _Handler(http.server.BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(data)))
+        for name, value in (extra[0] if extra else {}).items():
+            self.send_header(name, value)
         self.end_headers()
         self.wfile.write(data)
 
@@ -141,6 +143,22 @@ def t_usage_and_cost_accumulate():
         expected = (30 * 1.25 + 12 * 4.25) / 1_000_000
         assert abs(client.cost_usd - expected) < 1e-12, client.cost_usd
     finally:
+        server.close()
+
+
+def t_retry_after_header_is_honored_and_capped():
+    server = FakeServer()
+    real_sleep, sleeps = patch_sleep()
+    try:
+        _Handler.responses = [(429, {"error": "slow down"}, {"Retry-After": "7"}),
+                              (429, {"error": "slow down"}, {"Retry-After": "600"}),
+                              (429, {"error": "slow down"}),
+                              (200, ok_payload("ok", 1, 1))]
+        client = make_client(server)
+        assert client.chat([{"role": "user", "content": "hi"}]) == "ok"
+        assert sleeps == [7.0, 60, 8], sleeps  # header, capped header, then the backoff
+    finally:
+        llm.time.sleep = real_sleep
         server.close()
 
 

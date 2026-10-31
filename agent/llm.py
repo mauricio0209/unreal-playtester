@@ -19,8 +19,11 @@ PROVIDERS = {
                 "price_in": 1.25, "price_out": 4.25},
 }  # prices are USD per million tokens
 
-MAX_ATTEMPTS = 3
-BACKOFF_S = (2, 4)
+MAX_ATTEMPTS = 6
+# Rate limits are per minute (the contributor tier allows 150 requests/min per team), so
+# retries must be able to wait out most of a minute instead of failing a whole session.
+BACKOFF_S = (2, 4, 8, 16, 30)
+MAX_RETRY_AFTER_S = 60
 TIMEOUT_S = 120
 
 
@@ -86,6 +89,7 @@ class ChatClient:
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         last_status = None
         last_body = ""
+        retry_after = None
         for attempt in range(MAX_ATTEMPTS):
             request = urllib.request.Request(url, data=body, headers=headers,
                                              method="POST")
@@ -98,6 +102,10 @@ class ChatClient:
                 except Exception:
                     err_body = ""
                 status = exc.code
+                try:
+                    retry_after = float(exc.headers.get("Retry-After"))
+                except (AttributeError, TypeError, ValueError):
+                    retry_after = None
                 if status == 429 or (isinstance(status, int)
                                      and 500 <= status <= 599):
                     last_status, last_body = status, err_body
@@ -113,6 +121,9 @@ class ChatClient:
             if attempt < MAX_ATTEMPTS - 1:
                 delay = (BACKOFF_S[attempt] if attempt < len(BACKOFF_S)
                          else BACKOFF_S[-1])
+                if retry_after is not None and retry_after > 0:
+                    delay = min(retry_after, MAX_RETRY_AFTER_S)
+                retry_after = None
                 time.sleep(delay)
         if last_status is None:
             raise RuntimeError(
