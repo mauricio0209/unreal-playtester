@@ -5,9 +5,16 @@ import os
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 BASE_URL = os.environ.get("UE_RC_URL", "http://127.0.0.1:30010")
 HARNESS_PATH = os.environ.get("UE_HARNESS_PATH", "/Game/Maps/UEDPIE_0_Arena.Arena:PersistentLevel.BP_TestHarness_C_0")
+SCREENSHOT_DIR = Path(
+    os.environ.get(
+        "UE_SCREENSHOT_DIR",
+        "/mnt/c/UnrealProjects/unreal-playtester/unreal/PlaytestArena/Saved/Screenshots/WindowsEditor",
+    )
+)
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # RC is localhost: bypass proxy
 
 
@@ -41,6 +48,66 @@ def call(function: str, **params) -> dict:
 
 def state() -> dict:
     return call("GetState")
+
+
+def move_to(x: float, y: float) -> None:
+    call("MoveTo", X=x, Y=y)
+
+
+def jump() -> None:
+    call("Jump")
+
+
+def look_at(x: float, y: float, z: float) -> None:
+    call("LookAt", X=x, Y=y, Z=z)
+
+
+def interact() -> None:
+    call("Interact")
+
+
+def screenshot(timeout: float = 10.0) -> Path:
+    SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+    before = {p.name for p in SCREENSHOT_DIR.glob("*.png") if p.is_file()}
+    call("Screenshot")
+    deadline = time.monotonic() + timeout
+    while True:
+        for p in sorted(SCREENSHOT_DIR.glob("*.png")):
+            if p.name in before or not p.is_file():
+                continue
+            try:
+                size1 = p.stat().st_size
+            except OSError:
+                continue
+            if size1 == 0:
+                continue
+            time.sleep(0.1)
+            try:
+                size2 = p.stat().st_size
+            except OSError:
+                continue
+            if size2 != 0 and size2 == size1:
+                return p
+        if time.monotonic() >= deadline:
+            raise UEError(f"screenshot timed out after {timeout}s")
+        time.sleep(0.05)
+
+
+def reset(timeout: float = 60.0) -> dict:
+    old = state()["BootTime"]
+    call("ResetLevel")
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            s = state()
+        except UEError:
+            pass
+        else:
+            if s["BootTime"] != old:
+                return s
+        if time.monotonic() >= deadline:
+            raise UEError(f"reset timed out after {timeout}s")
+        time.sleep(0.25)
 
 
 def step(seconds: float, timeout: float = 30.0) -> dict:
