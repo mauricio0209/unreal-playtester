@@ -53,7 +53,7 @@ def run(replies, validate=accept_all, attempts=3):
 def t_valid_checks_first_reply():
     out, llm, logs = run([payload("a", "b")])
     assert [c["id"] for c in out] == ["a", "b"]
-    assert len(llm.seen) == 1 and len(logs) == 1
+    assert len(llm.seen) == 1 and sum(l.startswith("attempt") for l in logs) == 1
     assert llm.tokens == [8000]
 
 
@@ -169,6 +169,21 @@ def t_default_validator_applies_the_guard():
                    json.dumps(check("ok", {"==": [{"var": "ActorStates.Gate"}, "open"]}))])
     out = oracle.write_checks(llm, DESIGN, state, log=lambda *_: None, attempts=1)
     assert [c["id"] for c in out] == ["ok"], out
+
+
+def t_uncovered_objects_trigger_one_review():
+    state = {"ActorStates": {"Gate": "closed", "Key": "present"}}
+    gate = check("gate", {"==": [{"var": "ActorStates.Gate"}, "open"]})
+    key = check("key", {"==": [{"var": "ActorStates.Key"}, "gone"]})
+    logs = []
+    llm = FakeLLM(["1. " + json.dumps(gate), json.dumps(gate) + "\n- " + json.dumps(key)])
+    out = oracle.write_checks(llm, DESIGN, state, log=logs.append)
+    assert [c["id"] for c in out] == ["gate", "key"], out
+    assert "No check reads these objects: Key" in llm.seen[1][-1]["content"]
+    # asked once: a reply that still leaves an object uncovered is accepted
+    llm = FakeLLM([json.dumps(gate), json.dumps(gate)])
+    out = oracle.write_checks(llm, DESIGN, state, log=lambda *_: None)
+    assert [c["id"] for c in out] == ["gate"] and len(llm.seen) == 2, (out, len(llm.seen))
 
 
 def main():

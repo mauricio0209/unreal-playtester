@@ -36,6 +36,8 @@ Actions:
 
 Rules:
 - The game is paused between turns. move_to, jump and interact only take effect during the next step.
+- To interact with an object, walk_to its exact location from the state: you stop when you bump \
+into it, which is within interaction range. Stopping short of it can leave you out of range.
 - Walking speed is about 600 cm/s. Coordinates are in cm; the player stands about 90 cm above the floor.
 - File a bug right after you observe it, BEFORE any reset: the repro steps are taken automatically \
 from your actions since the last reset. Then the level resets for you.

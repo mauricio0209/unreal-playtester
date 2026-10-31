@@ -39,7 +39,9 @@ def _extract_json(reply: str):
 
     Returns (payload, errors): a malformed line only loses that check and its error is fed
     back, instead of one stray bracket discarding the whole list."""
-    lines = [ln.strip().rstrip(",") for ln in reply.splitlines() if ln.strip().startswith("{")]
+    # A short prefix such as "1." or "-" before a check is tolerated; nothing is dropped silently.
+    lines = [ln.strip()[ln.strip().find("{"):].rstrip(",") for ln in reply.splitlines()
+             if 0 <= ln.strip().find("{") <= 6]
     if len(lines) > 1 or (lines and '"checks"' not in lines[0]):
         checks, errors = [], []
         for n, line in enumerate(lines, 1):
@@ -117,6 +119,9 @@ def guard(check, state):
 
 def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) -> list[dict]:
     """Ask the model for checks, retrying rejected ones. See tasks/oracle.md."""
+    coverage = validate is None  # production only: test doubles use placeholder checks
+    asked_coverage = False
+    objects = sorted((state or {}).get("ActorStates") or {})
     if validate is None:
         import checks
 
@@ -149,11 +154,17 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
                 parse_failed = True
             else:
                 parse_failed = False
+        log(f"  {sum(1 for ln in reply.splitlines() if ln.strip())} reply lines, "
+            f"{len(new_valid)} valid checks")
         for cid, err in rejected:
             log(f"  rejected {cid}: {err}")
         if len(new_valid) >= len(best):
             best = new_valid
-        if not parse_failed and not rejected and new_valid:
+        # An object no check reads is a hint the list came back incomplete; ask once.
+        uncovered = [o for o in objects
+                     if coverage and not asked_coverage and new_valid
+                     and not any(o in json.dumps(c["violation"]) for c in new_valid)]
+        if not parse_failed and not rejected and new_valid and not uncovered:
             return best
         if i + 1 >= attempts:
             break
@@ -163,6 +174,15 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
                 "Your reply could not be parsed or had no check list "
                 f"({detail}). Reply with the complete corrected list, "
                 "one check per line as a complete JSON object, and nothing else."
+            )
+        elif not rejected and uncovered:
+            asked_coverage = True
+            log(f"  no check reads: {', '.join(uncovered)}")
+            feedback = (
+                f"No check reads these objects: {', '.join(uncovered)}. If the design document "
+                "states rules about them, add checks for those rules; if it does not, send the "
+                "same list again. Reply with the complete list, one check per line as a "
+                "complete JSON object, and nothing else."
             )
         elif not rejected:
             feedback = (
