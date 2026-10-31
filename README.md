@@ -63,12 +63,16 @@ Submission deadline: **Wednesday, November 4, 9:00 PM ET**.
 ## Muse Code usage
 
 Well-scoped tasks with a clear contract (for example the verifier's predicate functions) are
-delegated to Muse Code headlessly, then reviewed before commit:
+delegated to Muse Code headlessly, up to three lanes in parallel, then reviewed before commit:
 
 ```bash
-muse exec --model muse-spark-1.3 --prompt-file tasks/<task>.md    # bounded, mechanical tasks
-muse exec --model muse-wonder-1.0 --prompt-file tasks/<task>.md   # harder multi-file tasks
+scripts/muse-lane.sh <lane> tasks/<task>.md                     # muse-spark-1.3-contributor
+scripts/muse-lane.sh <lane> tasks/<task>.md muse-wonder-1.0     # harder multi-file tasks
 ```
+
+Each lane runs in its own git worktree under bubblewrap with `/mnt/c` hidden, so Muse never
+sees `.env` (Muse's own sandbox does not restrict reads). That is what makes the cheaper
+contributor tier safe here: the repository is public anyway.
 
 Each delegated task's prompt lives in `tasks/`, and its commit message says
 `Delegated to Muse Code`. Design, the harness and the verifier's replay logic stay hand-reviewed.
