@@ -44,9 +44,12 @@ version in English.
 ```
 [Python agent] --HTTP--> [UE 5.8 PIE + Remote Control API]
    |                        BP_TestHarness: GetState, MoveTo, Interact, Jump,
-   |                        LookAt, Step(seconds), Screenshot, ResetLevel
+   |                        LookAt, Step(seconds), Screenshot, ResetLevel, SetCamera
+   |- Sweep:    scripted lanes 2 m apart cover the walkable area; on any fall
+   |            they stop and hand the judgment to the explorer
    |- Explorer: Muse Spark (Meta Model API), sees screenshot + state + spec,
-   |            picks the next action or files a bug hypothesis
+   |            judges falls against the spec, exercises every object and
+   |            files bug hypotheses
    |- Verifier: resets the level, replays the repro steps 3 times and evaluates
    |            deterministic predicates on GetState()
    '- Report:   repro steps, before/after screenshots, verdict

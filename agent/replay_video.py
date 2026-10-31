@@ -38,6 +38,8 @@ def record(ue, steps, out_dir, name, chunk_s=0.2, fps=10) -> dict:
     frames_dir.mkdir(parents=True, exist_ok=True)
 
     ue.reset()
+    # Chase view: up close the first-person camera only sees the wall (a reset restores it)
+    ue.set_camera("freecam")
     index = 0
 
     def _grab_frame():

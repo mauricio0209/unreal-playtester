@@ -38,12 +38,13 @@ Rules:
 from your actions since the last reset. Then the level resets for you.
 - Use the state JSON, not only the image: it is ground truth for position, inventory and object states.
 - Anything the spec lists under "intentional" is by design and is NOT a bug.
-- Work in two phases. Phase 1: exercise every object listed in Objects (walk into pickups, \
-interact with doors from up close) and file what breaks. Test each object in its own attempt: \
-if an object works, reset before going to the next one, so every repro involves only one object \
-and cannot depend on what another object did. Phase 2: sweep the walkable area hall by \
-hall in parallel lanes about 200 cm apart, through the middle of each hall and the strips between \
-areas, not only along the walls. Level geometry can be broken anywhere.
+- A scripted sweep walks the walkable area in straight lanes about 200 cm apart, each lane from \
+a fresh level load, and runs between your turns. It hands control to you when the player falls: \
+then judge the fall against the spec (check the intentional list) and file a bug or reset.
+- Otherwise, exercise every object listed in Objects (walk into pickups, interact with doors from \
+up close) and file what breaks. Test each object in its own attempt: if an object works, reset \
+before going to the next one, so every repro involves only one object and cannot depend on what \
+another object did. When every object is done, explore what straight lanes could miss.
 - Bugs you already filed are listed each turn. Never file the same invariant twice: spend your \
 remaining turns finding different bugs.
 - If PawnAlive is false the player is gone: file a bug if it is one, otherwise reset.
@@ -121,6 +122,27 @@ def _shot(ue, shots_dir, name):
     return path
 
 
+def sweep_lanes(spec, spacing=200, margin=100, chunk_s=2.0, speed=600):
+    """Scripted coverage: one straight lane along X per Y row of the walkable area.
+
+    Lanes are cheap and exhaustive; the model only judges what they turn up. Returns
+    (lanes, fall params), or ([], None) when the spec has no walkable area or no fall invariant."""
+    area = (spec.get("level") or {}).get("walkable_area")
+    fall = next((i for i in spec.get("invariants", []) if i.get("predicate") == "fell_out_of_world"),
+                None)
+    if not area or not fall:
+        return [], None
+    x0, x1 = area["min"]["X"] + margin, area["max"]["X"] - margin
+    ys = range(int(area["min"]["Y"] + margin), int(area["max"]["Y"] - margin) + 1, spacing)
+    chunks = int((x1 - x0) / speed / chunk_s) + 1
+    # move_to is re-sent each chunk so the walk never depends on a target surviving a step
+    lanes = [[{"action": "move_to", "x": x0, "y": y}, {"action": "step", "seconds": chunk_s}] +
+             [s for _ in range(chunks) for s in ({"action": "move_to", "x": x1, "y": y},
+                                                 {"action": "step", "seconds": chunk_s})]
+             for y in ys]
+    return lanes, fall.get("params", {})
+
+
 def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print):
     shots_dir = Path(shots_dir)
     shots_dir.mkdir(parents=True, exist_ok=True)
@@ -132,12 +154,38 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
     known = set(state["ActorStates"])
     before = _shot(ue, shots_dir, "t000")
     note = "Fresh level load."
+    lanes, fall_params = sweep_lanes(spec)
+
+    def fell(s):  # any fall, intentional or not: judging it is the model's job
+        return verifier.fell_out_of_world([{"state": s}], fall_params, {})
 
     for turn in range(1, max_turns + 1):
+        while lanes and not fell(state) and time.monotonic() - started <= deadline_s:
+            lane = lanes.pop(0)
+            state, episode = ue.reset(), []
+            known = set(state["ActorStates"])
+            before = _shot(ue, shots_dir, f"t{turn:03d}_lane{len(lanes)}")
+            for step in lane:
+                state = _do(ue, step)
+                episode.append(step)
+                actions += 1
+                if fell(state):
+                    break
+            loc = _round(state["PlayerLocation"])
+            history.append(f"sweep lane y={lane[0]['y']} -> at {loc}, alive={state['PawnAlive']}")
+            log(f"sweep lane y={lane[0]['y']}: at {loc}, fell={fell(state)}")
+            if fell(state):
+                note = ("The scripted sweep stopped because the player fell: file a bug if "
+                        "this breaks an invariant, otherwise reset.")
+            elif not lanes:  # sweep done: object repros must not carry a lane's steps
+                state, episode = ue.reset(), []
+                known = set(state["ActorStates"])
+                before = _shot(ue, shots_dir, f"t{turn:03d}_swept")
+                note = "Scripted sweep finished. Level was reset."
         if time.monotonic() - started > deadline_s:
             log(f"deadline reached after {turn - 1} turns")
             break
-        shot = before if turn == 1 else _shot(ue, shots_dir, f"t{turn:03d}")
+        shot = before if turn == 1 and not episode else _shot(ue, shots_dir, f"t{turn:03d}")
         user = (f"Turn {turn}/{max_turns}. {note}\n"
                 f"Recent history:\n" + ("\n".join(history[-12:]) or "(none)") +
                 f"\nActions since last reset: {len(episode)}\n"
@@ -178,6 +226,9 @@ def explore(ue, llm, spec, shots_dir, max_turns=40, deadline_s=360.0, log=print)
             continue
 
         actions += len(steps)
+        if {h["invariant"] for h in hypotheses} >= {i["id"] for i in spec["invariants"]}:
+            log(f"every invariant filed after {turn} turns")
+            break
         if steps == [None]:  # bug filed or explicit reset: start a fresh episode
             state, episode = ue.reset(), []
             known = set(state["ActorStates"])

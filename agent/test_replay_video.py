@@ -57,6 +57,9 @@ class FakeUE:
     def interact(self):
         self.interacts += 1
 
+    def set_camera(self, mode):
+        self.camera = mode
+
     def screenshot(self):
         self.shots += 1
         path = self.engine_dir / f"shot_{self.shots:04d}.png"

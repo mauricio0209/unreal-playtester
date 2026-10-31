@@ -62,6 +62,11 @@ def look_at(x: float, y: float, z: float) -> None:
     call("LookAt", X=x, Y=y, Z=z)
 
 
+def set_camera(mode: str) -> None:
+    """Runs the console command `camera <mode>`: "freecam" (chase view) or "default"."""
+    call("SetCamera", Mode=mode)
+
+
 def interact() -> None:
     call("Interact")
 

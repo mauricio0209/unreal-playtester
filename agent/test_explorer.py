@@ -5,7 +5,8 @@ from pathlib import Path
 
 import explorer
 
-SPEC = {"invariants": [{"id": "door_opens", "description": "d", "predicate": "p"}],
+SPEC = {"invariants": [{"id": "door_opens", "description": "d", "predicate": "p"},
+                       {"id": "pickup_counts", "description": "d", "predicate": "p"}],
         "intentional": []}
 
 
@@ -135,6 +136,34 @@ def t_screenshot_sent_every_turn():
     for msgs in llm.seen:
         img = msgs[1]["content"][1]
         assert img["image_url"]["url"].startswith("data:image/png;base64,"), img
+
+
+def t_sweep_hands_falls_to_model():
+    spec = {"level": {"walkable_area": {"min": {"X": -100, "Y": -300}, "max": {"X": 1100, "Y": 300}}},
+            "invariants": [{"id": "no_fall", "description": "d", "predicate": "fell_out_of_world",
+                            "params": {"below_z": -200}}], "intentional": []}
+
+    class HoleUE(FakeUE):  # lane y=0 has no floor
+        def move_to(self, x, y):
+            super().move_to(x, y)
+            self.y = y
+
+        def step(self, seconds):
+            s = super().step(seconds)
+            s["LastZ"] = -500 if self.y == 0 else 90
+            return s
+
+    with tempfile.TemporaryDirectory() as tmp:
+        ue = HoleUE(tmp)
+        llm = FakeLLM(['{"bug": {"invariant": "no_fall", "title": "hole", "hypothesis": "h"}}'])
+        out = explorer.explore(ue, llm, spec, Path(tmp) / "shots", max_turns=1, log=lambda *_: None)
+    [h] = out["hypotheses"]
+    assert h["steps"] == [{"action": "move_to", "x": 0, "y": 0},
+                          {"action": "step", "seconds": 2.0}], h["steps"]
+    assert len(llm.seen) == 1  # the model was only asked once, about the fall
+    assert "sweep stopped" in llm.seen[0][1]["content"][0]["text"]
+    lanes = [c[2] for c in ue.calls if c[0] == "move_to" and c[1] == 0]
+    assert lanes == [-200, 0], lanes  # lane y=200 still pending when turns ran out
 
 
 def main():
