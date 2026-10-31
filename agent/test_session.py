@@ -390,6 +390,24 @@ def t_video_failure_still_reports():
         tmp.cleanup()
 
 
+def t_script_provider_runs_without_llm():
+    tmp = tempfile.TemporaryDirectory()
+    try:
+        explorer = FakeExplorer()
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            rc = session.main(argv=["--provider", "script"], ue=make_ue(),
+                              client=None, explorer_mod=explorer, now=NOW,
+                              run_root=tmp.name)
+        assert rc == 0
+        assert explorer.calls[0]["llm"] is None, explorer.calls
+        doc = json.loads((Path(tmp.name) / "runs" / STAMP / "session.json")
+                         .read_text(encoding="utf-8"))
+        assert doc["session"]["cost_usd"] == 0, doc["session"]
+    finally:
+        tmp.cleanup()
+
+
 def main():
     tests = sorted((name, fn) for name, fn in globals().items()
                    if name.startswith("t_") and callable(fn))

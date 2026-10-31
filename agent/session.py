@@ -65,7 +65,7 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
          run_root=None, video_mod=None):
     parser = argparse.ArgumentParser(description="Run a playtest session.")
     parser.add_argument("--provider", default="meta",
-                        choices=("meta", "baseten"))
+                        choices=("meta", "baseten", "script"))
     parser.add_argument("--model", default=None)
     parser.add_argument("--effort", default="low",
                         help="reasoning_effort sent to the model ('' to omit)")
@@ -91,7 +91,7 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     shots_dir = run_dir / "shots"
     shots_dir.mkdir(parents=True, exist_ok=True)
 
-    if client is None:
+    if client is None and args.provider != "script":
         import llm as llm_mod
         client = llm_mod.from_env(args.provider, model=args.model,
                                   reasoning_effort=args.effort or None)
@@ -101,7 +101,10 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     import verifier as verifier_mod
     import report as report_mod
     if explorer_mod is None:
-        import explorer as explorer_mod
+        if args.provider == "script":
+            import baseline as explorer_mod
+        else:
+            import explorer as explorer_mod
     if video_mod is None:
         import replay_video as video_mod
 
