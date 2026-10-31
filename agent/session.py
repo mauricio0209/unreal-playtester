@@ -67,6 +67,8 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     parser.add_argument("--provider", default="meta",
                         choices=("meta", "baseten"))
     parser.add_argument("--model", default=None)
+    parser.add_argument("--effort", default="low",
+                        help="reasoning_effort sent to the model ('' to omit)")
     parser.add_argument("--turns", type=int, default=DEFAULT_TURNS)
     parser.add_argument("--minutes", type=float, default=DEFAULT_MINUTES)
     args = parser.parse_args(argv)
@@ -89,7 +91,8 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
 
     if client is None:
         import llm as llm_mod
-        client = llm_mod.from_env(args.provider, model=args.model)
+        client = llm_mod.from_env(args.provider, model=args.model,
+                                  reasoning_effort=args.effort or None)
     if ue is None:
         import ue as ue_mod
         ue = ue_mod

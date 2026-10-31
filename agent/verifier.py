@@ -102,29 +102,31 @@ def _in_region(x, y, region) -> bool:
     return low_x <= x <= high_x and low_y <= y <= high_y
 
 
+def _is_num(value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def fell_out_of_world(trace, params, spec) -> bool:
-    """True if the pawn died/fell below KillZ outside intentional regions."""
+    """True if the pawn died, fell below KillZ, or is below `below_z` (already under the
+    floor, still falling) outside intentional regions."""
     intentional = spec.get("intentional", []) or []
+    below_z = params.get("below_z")
     for index, entry in enumerate(trace):
         state = entry["state"]
         died = "PawnAlive" in state and not state["PawnAlive"]
         last_z = state.get("LastZ")
         kill_z = state.get("KillZ")
-        fell_below = (
-            isinstance(last_z, (int, float))
-            and not isinstance(last_z, bool)
-            and isinstance(kill_z, (int, float))
-            and not isinstance(kill_z, bool)
-            and last_z < kill_z
-        )
+        fell_below = _is_num(last_z) and (
+            (_is_num(kill_z) and last_z < kill_z) or (_is_num(below_z) and last_z < below_z))
         if not (died or fell_below):
             continue
-        # Last known pawn XY at or before the fatal state.
-        x = y = None
+        # Where the pawn went through the floor; older states only carry the last known XY.
+        floor = state.get("LastFloorLocation")
+        x, y = (floor.get("X"), floor.get("Y")) if isinstance(floor, dict) else (None, None)
         for prev in range(index, -1, -1):
-            x, y = _player_xy(trace[prev]["state"])
             if x is not None and y is not None:
                 break
+            x, y = _player_xy(trace[prev]["state"])
         excused = any(
             _in_region(x, y, area.get("region"))
             for area in intentional

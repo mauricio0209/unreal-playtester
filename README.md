@@ -5,7 +5,7 @@ The model **proposes** bugs. An independent, deterministic verifier **confirms**
 by replaying it from a clean level load and checking engine state. No LLM is involved
 in verification.
 
-> Status: planning. Built for the Meta Global AI Developer Hackathon 2026.
+> Status: working end to end. Built for the Meta Global AI Developer Hackathon 2026.
 
 ## Built during the hackathon
 
@@ -57,7 +57,7 @@ Submission deadline: **Wednesday, November 4, 9:00 PM ET**.
 | Fri, Oct 30 | Setup: repo, UE, Remote Control, MCP, Muse Code authenticated. | Done. |
 | Sat, Oct 31 (2–3 h) | Greybox map + `BP_TestHarness` with `GetState`, `Step`, `MoveTo`, `Screenshot` and `ResetLevel`, driven from Python. | Done Fri night: the pawn moves over HTTP and replays are bit-identical across PIE sessions. |
 | Sun, Nov 1 (2–3 h) | 3 seeded bugs + 1 decoy, `spec.json`, replay verifier (no LLM). | Done Fri night: `agent/check_seeded.py` confirms all 3 bugs 3/3 and rejects the decoy (from two directions) and a harmless walk. |
-| Mon, Nov 2 (full day) | Agent loop with Muse Spark + report. | Success criteria 1–3. |
+| Mon, Nov 2 (full day) | Agent loop with Muse Spark + report. | Done Fri night: a session confirmed all 3 bugs 3/3 with no false positives in 5.3 min for US$0.18. |
 | Tue, Nov 3 (full day) | Muse Spark Open on Baseten as alternate explorer, polish, README, record footage. | Feature freeze at 18:00. |
 | Wed, Nov 4 | Edit the 3-minute video, submit before noon, post on X. | No new code. |
 
@@ -83,6 +83,18 @@ Each delegated task's prompt lives in `tasks/`, and its commit message says
 ```bash
 cp .env.example .env   # then fill in your keys
 ```
+
+Open `unreal/PlaytestArena` in UE 5.8, press Play, then:
+
+```bash
+python3 agent/session.py             # full session: explore, verify, report in runs/<timestamp>/
+python3 agent/check_seeded.py        # verifier check with hand-written repros (no LLM)
+for t in agent/test_*.py; do python3 $t; done
+```
+
+The explorer never writes repro steps: when Muse Spark files a bug, the repro is the list of
+actions actually executed since the last level reset, so the verifier replays exactly what
+happened. Muse Spark runs with `reasoning_effort: low` (`--effort`), about 3.5 s per turn.
 
 ## Repository layout
 

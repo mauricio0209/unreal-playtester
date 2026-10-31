@@ -58,7 +58,8 @@ def image_part(path) -> dict:
 
 class ChatClient:
     def __init__(self, base_url, api_key, model, auth="Bearer",
-                 price_in=0.0, price_out=0.0):
+                 price_in=0.0, price_out=0.0, reasoning_effort=None):
+        self.reasoning_effort = reasoning_effort
         self.base_url = base_url
         self.api_key = api_key
         self.model = model
@@ -76,8 +77,10 @@ class ChatClient:
 
     def chat(self, messages, max_tokens=4000) -> str:
         url = self.base_url.rstrip("/") + "/chat/completions"
-        body = json.dumps({"model": self.model, "messages": messages,
-                           "max_tokens": max_tokens}).encode("utf-8")
+        payload = {"model": self.model, "messages": messages, "max_tokens": max_tokens}
+        if self.reasoning_effort:
+            payload["reasoning_effort"] = self.reasoning_effort
+        body = json.dumps(payload).encode("utf-8")
         headers = {"Content-Type": "application/json",
                    "Authorization": f"{self.auth} {self.api_key}"}
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
@@ -142,7 +145,7 @@ class ChatClient:
         return content
 
 
-def from_env(provider="meta", env_path=None, model=None) -> ChatClient:
+def from_env(provider="meta", env_path=None, model=None, reasoning_effort=None) -> ChatClient:
     try:
         config = PROVIDERS[provider]
     except KeyError:
@@ -159,4 +162,5 @@ def from_env(provider="meta", env_path=None, model=None) -> ChatClient:
     return ChatClient(base_url=config["base_url"], api_key=api_key,
                       model=model or config["model"], auth=config["auth"],
                       price_in=config["price_in"],
-                      price_out=config["price_out"])
+                      price_out=config["price_out"],
+                      reasoning_effort=reasoning_effort)

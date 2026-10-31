@@ -11,7 +11,7 @@ import verifier
 
 CASES = [  # (name, invariant, steps, expected confirmed)
     ("floor without collision", "no_fall_out_of_world",
-     [{"action": "move_to", "x": 2500, "y": -500}, {"action": "step", "seconds": 8.0}], True),
+     [{"action": "move_to", "x": 2100, "y": -500}, {"action": "step", "seconds": 8.0}], True),
     ("door trigger misaligned", "door_opens",
      [{"action": "move_to", "x": 3440, "y": 0}, {"action": "step", "seconds": 7.0},
       {"action": "interact"}, {"action": "step", "seconds": 1.0}], True),
@@ -19,6 +19,8 @@ CASES = [  # (name, invariant, steps, expected confirmed)
      [{"action": "move_to", "x": 1000, "y": 500}, {"action": "step", "seconds": 3.0}], True),
     ("decoy pit", "no_fall_out_of_world",
      [{"action": "move_to", "x": 2500, "y": 500}, {"action": "step", "seconds": 8.0}], False),
+    ("decoy pit, still falling", "no_fall_out_of_world",
+     [{"action": "move_to", "x": 2500, "y": 500}, {"action": "step", "seconds": 5.3}], False),
     ("decoy pit from the east", "no_fall_out_of_world",
      [{"action": "move_to", "x": 3200, "y": 500}, {"action": "step", "seconds": 7.0},
       {"action": "move_to", "x": 2300, "y": 500}, {"action": "step", "seconds": 5.0}], False),

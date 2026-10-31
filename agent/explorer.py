@@ -38,8 +38,10 @@ Rules:
 from your actions since the last reset. Then the level resets for you.
 - Use the state JSON, not only the image: it is ground truth for position, inventory and object states.
 - Anything the spec lists under "intentional" is by design and is NOT a bug.
-- Explore systematically: try every object, and cover the whole walkable area of every hall \
-(corners, edges, strips between areas), not only the paths between objects. Level geometry can be broken anywhere.
+- Work in two phases. Phase 1: exercise every object listed in Objects (walk into pickups, \
+interact with doors from up close) and file what breaks. Phase 2: sweep the walkable area hall by \
+hall in parallel lanes about 200 cm apart, through the middle of each hall and the strips between \
+areas, not only along the walls. Level geometry can be broken anywhere.
 - Bugs you already filed are listed each turn. Never file the same invariant twice: spend your \
 remaining turns finding different bugs.
 - If PawnAlive is false the player is gone: file a bug if it is one, otherwise reset.

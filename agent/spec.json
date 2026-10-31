@@ -15,9 +15,11 @@
   "invariants": [
     {
       "id": "no_fall_out_of_world",
-      "description": "The player pawn must never die or fall below KillZ, except when falling into a region the design marks as intentional. A fall anywhere else is a level geometry bug.",
+      "description": "The player pawn must never fall out of the world: die, drop below KillZ, or end up more than 2 m below the floor (Z < -200), except through a region the design marks as intentional. A fall anywhere else is a level geometry bug.",
       "predicate": "fell_out_of_world",
-      "params": {}
+      "params": {
+        "below_z": -200
+      }
     },
     {
       "id": "door_opens",

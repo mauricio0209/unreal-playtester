@@ -107,6 +107,16 @@ def t_request_body_and_auth():
         server.close()
 
 
+def t_reasoning_effort_only_when_set():
+    server = FakeServer()
+    try:
+        client = make_client(server, reasoning_effort="low")
+        client.chat([{"role": "user", "content": "hi"}])
+        assert _Handler.requests[0]["body"]["reasoning_effort"] == "low"
+    finally:
+        server.close()
+
+
 def t_auth_scheme_from_client():
     server = FakeServer()
     try:

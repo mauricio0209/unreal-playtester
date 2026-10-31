@@ -152,6 +152,23 @@ def t_decoy_pit_not_a_bug():
     assert verifier.PREDICATES["fell_out_of_world"](outside, {}, spec) is True
 
 
+def t_fell_alive_below_floor_uses_floor_exit_point():
+    pit = [{"id": "decoy_pit", "description": "d",
+            "region": {"min": {"X": 400, "Y": 400}, "max": {"X": 600, "Y": 600}}}]
+    params = {"below_z": -200}
+
+    def falling(floor_xy):
+        # Alive, still above KillZ, drifted away from where it went through the floor.
+        return trace_of(make_state(), make_state(
+            LastZ=-925, PlayerLocation={"X": 2000, "Y": 2000, "Z": -925},
+            LastFloorLocation={"X": floor_xy[0], "Y": floor_xy[1], "Z": 0}))
+
+    fall = verifier.PREDICATES["fell_out_of_world"]
+    assert fall(falling((1885, -601)), params, base_spec(intentional=pit)) is True
+    assert fall(falling((500, 500)), params, base_spec(intentional=pit)) is False
+    assert fall(falling((1885, -601)), {}, base_spec(intentional=pit)) is False  # no below_z
+
+
 def t_decoy_pit_entered_during_long_step():
     # The previous sample is far from the pit; the harness reports the last
     # known location on the death state, so that is what decides.
