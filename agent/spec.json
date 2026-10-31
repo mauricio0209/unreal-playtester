@@ -22,8 +22,8 @@
   "intentional": [
     {
       "id": "decoy_pit",
-      "description": "A pit the design wants players to fall into.",
-      "region": {"min": {"X": 0, "Y": 0}, "max": {"X": 0, "Y": 0}}
+      "description": "The visible open pit in the middle hall is an intentional hazard; falling into it is expected. The region is the 200x200 cm pit plus a 50 cm capsule-radius margin.",
+      "region": {"min": {"X": 2350, "Y": 350}, "max": {"X": 2650, "Y": 650}}
     }
   ]
 }

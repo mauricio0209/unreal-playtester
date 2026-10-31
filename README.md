@@ -31,8 +31,9 @@ number of seconds per action, so model latency never affects the results.
 ## MVP scope
 
 - One greybox level with 3 seeded bugs and 1 decoy:
-  1. Floor without collision. Predicate: `!PawnAlive || LastZ < KillZ` (the engine destroys
-     the pawn below `KillZ`, so `GetState` reports its last known Z).
+  1. Floor without collision. Predicate: `!PawnAlive || LastZ < KillZ`, outside the intentional
+     regions in `spec.json`. The engine destroys the pawn below `KillZ`, so `GetState` reports its
+     last known Z and the XY where it went through the floor.
   2. Door with a misaligned trigger. Predicate: door stays closed after `Interact` within 150 cm.
   3. Pickup that doesn't increment the counter. Predicate: inventory unchanged although the pickup was destroyed.
   4. Decoy: a pit that `spec.json` declares intentional. It must be rejected.
@@ -55,7 +56,7 @@ Submission deadline: **Wednesday, November 4, 9:00 PM ET**.
 |---|---|---|
 | Fri, Oct 30 | Setup: repo, UE, Remote Control, MCP, Muse Code authenticated. | Done. |
 | Sat, Oct 31 (2–3 h) | Greybox map + `BP_TestHarness` with `GetState`, `Step`, `MoveTo`, `Screenshot` and `ResetLevel`, driven from Python. | Done Fri night: the pawn moves over HTTP and replays are bit-identical across PIE sessions. |
-| Sun, Nov 1 (2–3 h) | 3 seeded bugs + 1 decoy, `spec.json`, replay verifier (no LLM). | The verifier confirms the bugs from hand-written repro steps. |
+| Sun, Nov 1 (2–3 h) | 3 seeded bugs + 1 decoy, `spec.json`, replay verifier (no LLM). | Done Fri night: `agent/check_seeded.py` confirms all 3 bugs 3/3 and rejects the decoy (from two directions) and a harmless walk. |
 | Mon, Nov 2 (full day) | Agent loop with Muse Spark + report. | Success criteria 1–3. |
 | Tue, Nov 3 (full day) | Muse Spark Open on Baseten as alternate explorer, polish, README, record footage. | Feature freeze at 18:00. |
 | Wed, Nov 4 | Edit the 3-minute video, submit before noon, post on X. | No new code. |

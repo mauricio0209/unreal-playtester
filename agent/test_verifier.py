@@ -428,7 +428,7 @@ def t_load_spec_file():
         assert isinstance(inv["description"], str) and inv["description"]
     assert spec["intentional"][0]["id"] == "decoy_pit"
     region = spec["intentional"][0]["region"]
-    assert region == {"min": {"X": 0, "Y": 0}, "max": {"X": 0, "Y": 0}}, region
+    assert region == {"min": {"X": 2350, "Y": 350}, "max": {"X": 2650, "Y": 650}}, region
 
 
 def main():
