@@ -269,7 +269,7 @@ def t_from_env_file():
             client = llm.from_env("meta", env_path=path)
             assert client.api_key == "file-key-123", client.api_key
             assert client.base_url == "https://api.meta.ai/v1"
-            assert client.model == "muse-spark-1.3", client.model
+            assert client.model == "muse-spark-1.3-contributor", client.model
             assert client.auth == "Bearer"
             assert (client.price_in, client.price_out) == (1.25, 4.25)
             custom = llm.from_env("meta", env_path=path, model="custom-id")

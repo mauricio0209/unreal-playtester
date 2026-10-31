@@ -11,7 +11,7 @@ from pathlib import Path
 
 PROVIDERS = {
     "meta": {"base_url": "https://api.meta.ai/v1", "key_env": "META_API_KEY",
-             "auth": "Bearer", "model": "muse-spark-1.3",
+             "auth": "Bearer", "model": "muse-spark-1.3-contributor",
              "price_in": 1.25, "price_out": 4.25},
     "baseten": {"base_url": "https://inference.baseten.co/v1",
                 "key_env": "BASETEN_API_KEY",
