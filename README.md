@@ -76,6 +76,30 @@ number of seconds per action, so model latency never affects the results.
 3. No non-reproducible bug is ever marked as confirmed, and the decoy is rejected.
 4. Every report can be reproduced by a human from its steps alone.
 
+## Results
+
+Each session is one `python3 agent/session.py` run from a fresh PIE. Summaries come from
+`python3 scripts/summarize_runs.py . runs/<list>.txt`.
+
+**Benchmark 1** (Oct 31, 5 sessions per provider, alternating):
+
+| Explorer | Sessions with ≥2 bugs | All 3 bugs | False positives | Intermittent door confirmed | Mean time | Mean cost |
+|---|---|---|---|---|---|---|
+| Muse Spark 1.3 (Meta Model API) | 5/5 | 3/5 | 0 | never | 7.0 min | US$0.19 |
+| Muse Spark Open (Baseten) | 5/5 | 3/5 | 0 | never | 7.6 min | US$0.17 |
+
+**Benchmark 2** (Oct 31, 3 sessions per provider, final prompt that tests each object in its
+own attempt, replay video on):
+
+| Explorer | Sessions with ≥2 bugs | All 3 bugs | False positives | Intermittent door confirmed | Mean time | Mean cost |
+|---|---|---|---|---|---|---|
+| Muse Spark 1.3 (Meta Model API) | 3/3 | 0/3 | 0 | never | 6.9 min | US$0.20 |
+| Muse Spark Open (Baseten) | 3/3 | 0/3 | 0 | never | 8.5 min | US$0.09 |
+
+Every session in both benchmarks stayed under 9 minutes and US$0.21. In benchmark 2 every
+session confirmed the door and the pickup but missed the floor without collision: testing
+objects first left less of the budget for sweeping the map, and the sweep lanes missed the hole.
+
 ## Roadmap
 
 Submission deadline: **Wednesday, November 4, 9:00 PM ET**.
