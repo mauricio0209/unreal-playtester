@@ -71,6 +71,11 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
                         help="reasoning_effort sent to the model ('' to omit)")
     parser.add_argument("--turns", type=int, default=DEFAULT_TURNS)
     parser.add_argument("--minutes", type=float, default=DEFAULT_MINUTES)
+    parser.add_argument("--level", default="arena", choices=("arena", "vault"),
+                        help="arena: hand-written spec.json; vault: the model writes the checks "
+                             "from levels/vault.md (PIE must be playing that map)")
+    parser.add_argument("--checks", default=None,
+                        help="reuse a checks.json from an earlier run instead of asking the model")
     parser.add_argument("--no-video", action="store_true",
                         help="skip replay videos for confirmed bugs")
     args = parser.parse_args(argv)
@@ -108,13 +113,33 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     if video_mod is None:
         import replay_video as video_mod
 
-    spec = verifier_mod.load_spec(str(HERE / "spec.json"))
     log_file = (run_dir / "explore.log").open("w", encoding="utf-8")
 
     def log(line):
         print(line)
         log_file.write(line + "\n")
         log_file.flush()
+
+    if args.level == "arena":
+        spec = verifier_mod.load_spec(str(HERE / "spec.json"))
+    else:
+        import checks as checks_mod
+        import oracle
+        if hasattr(ue, "HARNESS_PATH"):
+            ue.HARNESS_PATH = ue.HARNESS_PATH.replace("Arena", "Vault")
+        if args.checks:
+            checks = json.loads(Path(args.checks).read_text(encoding="utf-8"))
+            for check in checks:  # the file may have been edited: same trust boundary
+                checks_mod.validate(check)
+        elif client is None:
+            parser.error("--provider script needs --checks: it cannot write checks itself")
+        else:
+            checks = oracle.write_checks(client, (HERE / "levels" / f"{args.level}.md")
+                                         .read_text(encoding="utf-8"), ue.reset(), log=log)
+        (run_dir / "checks.json").write_text(json.dumps(checks, indent=2), encoding="utf-8")
+        for check in checks:
+            log(f"check {check['id']}: {check['description']}")
+        spec = oracle.to_spec(checks)
 
     result = explorer_mod.explore(ue, client, spec, shots_dir,
                                  max_turns=int(args.turns),

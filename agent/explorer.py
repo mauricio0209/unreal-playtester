@@ -41,10 +41,12 @@ from your actions since the last reset. Then the level resets for you.
 - A scripted sweep walks the walkable area in straight lanes about 200 cm apart, each lane from \
 a fresh level load, and runs between your turns. It hands control to you when the player falls: \
 then judge the fall against the spec (check the intentional list) and file a bug or reset.
-- Otherwise, exercise every object listed in Objects (walk into pickups, interact with doors from \
-up close) and file what breaks. Test each object in its own attempt: if an object works, reset \
-before going to the next one, so every repro involves only one object and cannot depend on what \
-another object did. When every object is done, explore what straight lanes could miss.
+- Otherwise, exercise every invariant in the spec through the objects listed in Objects (walk \
+into pickups, interact with doors from up close) and file what breaks. Test each invariant in its \
+own attempt: reset before starting the next one, so every repro holds only the actions that \
+invariant needs (an invariant may need a sequence, like picking something up before using \
+something else). Try both what should work and what should not. When every invariant is done, \
+explore what straight lanes could miss.
 - Bugs you already filed are listed each turn. Never file the same invariant twice: spend your \
 remaining turns finding different bugs.
 - If PawnAlive is false the player is gone: file a bug if it is one, otherwise reset.

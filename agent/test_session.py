@@ -408,6 +408,41 @@ def t_script_provider_runs_without_llm():
         tmp.cleanup()
 
 
+def t_vault_reuses_checks_file():
+    tmp = tempfile.TemporaryDirectory()
+    try:
+        check = {"id": "gate_needs_key", "description": "d",
+                 "violation": {"ever": {"==": [{"var": "ActorStates.Gate"}, "open"]}}}
+        checks_path = Path(tmp.name) / "checks.json"
+        checks_path.write_text(json.dumps([check]), encoding="utf-8")
+        explorer = FakeExplorer()
+        with redirect_stdout(io.StringIO()):
+            rc = session.main(argv=["--provider", "script", "--level", "vault",
+                                    "--checks", str(checks_path)],
+                              ue=make_ue(), client=None, explorer_mod=explorer, now=NOW,
+                              run_root=tmp.name)
+        assert rc == 0
+        [inv] = explorer.calls[0]["spec"]["invariants"]
+        assert inv["predicate"] == "dsl" and inv["params"]["expr"] == check["violation"], inv
+        saved = json.loads((Path(tmp.name) / "runs" / STAMP / "checks.json").read_text())
+        assert saved == [check], saved
+
+        bad = dict(check, violation={"eval": "x"})  # an edited file is untrusted too
+        checks_path.write_text(json.dumps([bad]), encoding="utf-8")
+        try:
+            with redirect_stdout(io.StringIO()):
+                session.main(argv=["--provider", "script", "--level", "vault",
+                                   "--checks", str(checks_path)],
+                             ue=make_ue(), client=None, explorer_mod=FakeExplorer(),
+                             now=NOW, run_root=tmp.name)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("an invalid check file must be rejected")
+    finally:
+        tmp.cleanup()
+
+
 def main():
     tests = sorted((name, fn) for name, fn in globals().items()
                    if name.startswith("t_") and callable(fn))
