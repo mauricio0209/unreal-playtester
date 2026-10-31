@@ -10,6 +10,8 @@ Standard library only.
 import json
 import math
 
+import checks
+
 ALLOWED_ACTIONS = ("move_to", "jump", "look_at", "interact", "step")
 
 
@@ -202,6 +204,7 @@ PREDICATES: dict[str, callable] = {
     "fell_out_of_world": fell_out_of_world,
     "door_stays_closed_after_interact": door_stays_closed_after_interact,
     "pickup_not_counted": pickup_not_counted,
+    "dsl": checks.dsl_violation,
 }
 
 
