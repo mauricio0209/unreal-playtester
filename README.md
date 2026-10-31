@@ -66,7 +66,8 @@ Well-scoped tasks with a clear contract (for example the verifier's predicate fu
 delegated to Muse Code headlessly, then reviewed before commit:
 
 ```bash
-muse exec --prompt-file tasks/<task>.md
+muse exec --model muse-spark-1.3 --prompt-file tasks/<task>.md    # bounded, mechanical tasks
+muse exec --model muse-wonder-1.0 --prompt-file tasks/<task>.md   # harder multi-file tasks
 ```
 
 Each delegated task's prompt lives in `tasks/`, and its commit message says
