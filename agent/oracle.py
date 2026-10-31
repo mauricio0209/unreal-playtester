@@ -112,15 +112,21 @@ def guard(check, state):
         if checks._lookup_path(state, path) is None:
             names = ", ".join(sorted((state.get("ActorStates") or {})))
             raise ValueError(f"path {path!r} does not exist in the game state (objects: {names})")
+    if len(check["description"].strip()) < 15:
+        raise ValueError("the description must state the design rule the check enforces")
     if checks.evaluate([{"action": None, "state": state}], check["violation"]):
         raise ValueError("it already fires on a fresh level load, before the player does "
                          "anything, so it cannot tell a bug from normal play")
+    idle = [{"action": None, "state": state}, {"action": {"action": "step", "seconds": 1.0},
+                                               "state": state}]
+    if checks.evaluate(idle, check["violation"]):
+        raise ValueError("it fires when the player only waits and nothing in the game "
+                         "changes, so it cannot tell a bug from normal play")
 
 
 def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) -> list[dict]:
     """Ask the model for checks, retrying rejected ones. See tasks/oracle.md."""
     coverage = validate is None  # production only: test doubles use placeholder checks
-    asked_coverage = False
     objects = sorted((state or {}).get("ActorStates") or {})
     if validate is None:
         import checks
@@ -160,9 +166,9 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
             log(f"  rejected {cid}: {err}")
         if len(new_valid) >= len(best):
             best = new_valid
-        # An object no check reads is a hint the list came back incomplete; ask once.
+        # An object no check reads is a hint the list came back incomplete: ask again.
         uncovered = [o for o in objects
-                     if coverage and not asked_coverage and new_valid
+                     if coverage and new_valid
                      and not any(o in json.dumps(c["violation"]) for c in new_valid)]
         if not parse_failed and not rejected and new_valid and not uncovered:
             return best
@@ -176,7 +182,6 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
                 "one check per line as a complete JSON object, and nothing else."
             )
         elif not rejected and uncovered:
-            asked_coverage = True
             log(f"  no check reads: {', '.join(uncovered)}")
             feedback = (
                 f"No check reads these objects: {', '.join(uncovered)}. If the design document "
@@ -199,6 +204,11 @@ def write_checks(llm, design_text, state, log=print, attempts=3, validate=None) 
         messages.append({"role": "user", "content": feedback})
     if not best:
         raise ValueError("no valid check was obtained after all attempts")
+    unread = [o for o in objects if coverage
+              and not any(o in json.dumps(c["violation"]) for c in best)]
+    if len(unread) * 2 > len(objects):  # better a clear failure than a session with no oracle
+        raise ValueError(f"the checks read only {len(objects) - len(unread)} of {len(objects)} "
+                         f"objects after {attempts} attempts (unread: {', '.join(unread)})")
     return best
 
 

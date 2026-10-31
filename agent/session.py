@@ -88,13 +88,17 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
     repo_root = (Path(__file__).resolve().parent.parent
                  if run_root is None else Path(run_root))
     stamp = start_dt.strftime("%Y%m%d-%H%M%S")
-    run_dir = repo_root / "runs" / stamp
+    (repo_root / "runs").mkdir(parents=True, exist_ok=True)
     suffix = 1
-    while run_dir.exists():
-        suffix += 1
-        run_dir = repo_root / "runs" / f"{stamp}-{suffix}"
+    while True:  # mkdir is atomic: two sessions starting in the same second get two dirs
+        run_dir = repo_root / "runs" / (stamp if suffix == 1 else f"{stamp}-{suffix}")
+        try:
+            run_dir.mkdir()
+            break
+        except FileExistsError:
+            suffix += 1
     shots_dir = run_dir / "shots"
-    shots_dir.mkdir(parents=True, exist_ok=True)
+    shots_dir.mkdir()
 
     if client is None and args.provider != "script":
         import llm as llm_mod

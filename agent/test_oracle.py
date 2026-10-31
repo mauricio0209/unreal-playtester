@@ -13,7 +13,7 @@ STATE = {"PawnAlive": True, "PlayerLocation": {"X": 0, "Y": 0, "Z": 90},
 
 
 def check(cid, violation=None):
-    return {"id": cid, "description": f"rule {cid}",
+    return {"id": cid, "description": f"the design rule for {cid}",
             "violation": violation if violation is not None else {"ever": True}}
 
 
@@ -116,7 +116,7 @@ def t_duplicate_ids_first_wins():
 def t_to_spec_without_base():
     spec = oracle.to_spec([check("a")])
     assert spec == {"intentional": [],
-                    "invariants": [{"id": "a", "description": "rule a",
+                    "invariants": [{"id": "a", "description": "the design rule for a",
                                     "predicate": "dsl",
                                     "params": {"expr": {"ever": True}}}]}
     assert "level" not in spec
@@ -154,7 +154,11 @@ def t_guard_rejects_unknown_paths_and_checks_firing_at_load():
                        (check("loc", {"<": [{"dist": ["PlayerLocation", "ActorLocations.Gem"]}, 9]}),
                         "ActorLocations.Gem"),
                        (check("at_load", {"ever": {"==": [{"var": "ActorStates.Gate"}, "closed"]}}),
-                        "fresh level load")):
+                        "fresh level load"),
+                       (check("idle", {"ever": {"==": [{"prev": "ActorStates.Gem"}, "present"]}}),
+                        "only waits"),
+                       (dict(check("terse", {"==": [{"var": "ActorStates.Gate"}, "open"]}),
+                             description="d"), "design rule")):
         try:
             oracle.guard(bad, state)
         except ValueError as exc:
@@ -180,10 +184,18 @@ def t_uncovered_objects_trigger_one_review():
     out = oracle.write_checks(llm, DESIGN, state, log=logs.append)
     assert [c["id"] for c in out] == ["gate", "key"], out
     assert "No check reads these objects: Key" in llm.seen[1][-1]["content"]
-    # asked once: a reply that still leaves an object uncovered is accepted
-    llm = FakeLLM([json.dumps(gate), json.dumps(gate)])
+    # still half uncovered after every attempt: accepted (the document may say nothing about it)
+    llm = FakeLLM([json.dumps(gate)] * 3)
     out = oracle.write_checks(llm, DESIGN, state, log=lambda *_: None)
-    assert [c["id"] for c in out] == ["gate"] and len(llm.seen) == 2, (out, len(llm.seen))
+    assert [c["id"] for c in out] == ["gate"] and len(llm.seen) == 3, (out, len(llm.seen))
+    # most objects never read: a clear failure instead of a session with no oracle
+    big = {"ActorStates": {"Gate": "closed", "Key": "present", "Coin": "present"}}
+    try:
+        oracle.write_checks(FakeLLM([json.dumps(gate)] * 3), DESIGN, big, log=lambda *_: None)
+    except ValueError as exc:
+        assert "read only 1 of 3 objects" in str(exc), exc
+    else:
+        raise AssertionError("one check over three objects must fail")
 
 
 def main():
