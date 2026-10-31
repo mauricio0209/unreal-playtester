@@ -71,9 +71,10 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
                         help="reasoning_effort sent to the model ('' to omit)")
     parser.add_argument("--turns", type=int, default=DEFAULT_TURNS)
     parser.add_argument("--minutes", type=float, default=DEFAULT_MINUTES)
-    parser.add_argument("--level", default="arena", choices=("arena", "vault"),
-                        help="arena: hand-written spec.json; vault: the model writes the checks "
-                             "from levels/vault.md (PIE must be playing that map)")
+    parser.add_argument("--level", default="arena",
+                        choices=["arena"] + sorted(f.stem for f in (HERE / "levels").glob("*.md")),
+                        help="arena: hand-written spec.json; any other level: the model writes "
+                             "the checks from levels/<level>.md (PIE must be playing that map)")
     parser.add_argument("--checks", default=None,
                         help="reuse a checks.json from an earlier run instead of asking the model")
     parser.add_argument("--no-video", action="store_true",
@@ -130,7 +131,7 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
         import checks as checks_mod
         import oracle
         if hasattr(ue, "HARNESS_PATH"):
-            ue.HARNESS_PATH = ue.HARNESS_PATH.replace("Arena", "Vault")
+            ue.HARNESS_PATH = ue.HARNESS_PATH.replace("Arena", args.level.capitalize())
         if args.checks:
             checks = json.loads(Path(args.checks).read_text(encoding="utf-8"))
             for check in checks:  # the file may have been edited: same trust boundary
