@@ -43,6 +43,15 @@ def sample_finding(**overrides):
     return finding
 
 
+def t_flaky_verdict_labelled():
+    flaky = {"invariant": "door_opens", "confirmed": False, "runs": [False, True, False],
+             "reason": "bug reproduced in 1 of 3 runs"}
+    with tempfile.TemporaryDirectory() as tmp:
+        text = report.write_report(tmp, sample_session(),
+                                   [sample_finding(verdict=flaky)]).read_text()
+    assert "Verdict: Flaky, not confirmed (1/3 runs reproduced)" in text, text
+
+
 def t_describe_step_move_to():
     assert report.describe_step({"action": "move_to", "x": 3350, "y": 0}) == \
         "Walk to (3350, 0)"

@@ -55,7 +55,12 @@ def _finding_section(finding: dict) -> list[str]:
     hits = sum(1 for r in runs if r)
     total = len(runs)
     confirmed = verdict.get("confirmed", False)
-    status = "Confirmed" if confirmed else "Rejected"
+    if confirmed:
+        status = "Confirmed"
+    elif 0 < hits < total:
+        status = "Flaky, not confirmed"  # real but intermittent: needs a human, not a ticket
+    else:
+        status = "Rejected"
     lines.append(f"Verdict: {status} ({hits}/{total} runs reproduced)")
     lines.append("")
     lines.append(f"Runs: {', '.join(str(bool(r)) for r in runs)}")

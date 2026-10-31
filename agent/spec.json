@@ -31,6 +31,15 @@
       }
     },
     {
+      "id": "door2_opens",
+      "description": "Interacting with Door2 while standing within 150 cm of it must open the door. If the door is still not open after a later step, the interaction is broken.",
+      "predicate": "door_stays_closed_after_interact",
+      "params": {
+        "door": "Door2",
+        "radius": 150
+      }
+    },
+    {
       "id": "pickup_counts",
       "description": "Collecting Pickup1 (it disappears from the world) must increase InventoryCount. If it is gone but the count is unchanged since it was last present, the pickup was lost.",
       "predicate": "pickup_not_counted",

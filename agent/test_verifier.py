@@ -434,7 +434,7 @@ def t_load_spec_file():
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "spec.json")
     spec = verifier.load_spec(path)
     ids = {inv["id"] for inv in spec["invariants"]}
-    assert ids == {"no_fall_out_of_world", "door_opens", "pickup_counts"}, ids
+    assert ids == {"no_fall_out_of_world", "door_opens", "door2_opens", "pickup_counts"}, ids
     by_id = {inv["id"]: inv for inv in spec["invariants"]}
     assert by_id["door_opens"]["predicate"] == "door_stays_closed_after_interact"
     assert by_id["door_opens"]["params"] == {"door": "Door1", "radius": 150}
