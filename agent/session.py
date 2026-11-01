@@ -214,13 +214,15 @@ def main(argv=None, ue=None, client=None, explorer_mod=None, now=None,
         cost = 0.0
     session_info = {"started": start_dt.isoformat(), "model": model_name,
                     "actions": actions, "cost_usd": cost,
-                    "duration_s": round(duration_s, 1)}
+                    "duration_s": round(duration_s, 1), "level": args.level}
 
     report_path = report_mod.write_report(run_dir, session_info, findings)
     session_doc = {"session": session_info, "findings": findings,
                    "hypotheses": [_jsonable(h) for h in hypotheses]}
     (run_dir / "session.json").write_text(json.dumps(session_doc, indent=2),
                                           encoding="utf-8")
+    import report_html
+    report_html.write_html(run_dir, args.level)
 
     n_confirmed = sum(1 for f in findings
                       if (f.get("verdict") or {}).get("confirmed"))
