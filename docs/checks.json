@@ -1,0 +1,717 @@
+[
+  {
+    "id": "doors_start_closed",
+    "description": "Every door starts closed and locked.",
+    "violation": {
+      "or": [
+        {
+          "!=": [
+            {
+              "first": "ActorStates.GreenDoor"
+            },
+            "closed"
+          ]
+        },
+        {
+          "!=": [
+            {
+              "first": "ActorStates.RedDoor"
+            },
+            "closed"
+          ]
+        },
+        {
+          "!=": [
+            {
+              "first": "ActorStates.BlueDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "green_opens_with_key",
+    "description": "Interacting with the green door up close while carrying the green key must open it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.GreenKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.GreenDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.GreenDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "red_opens_with_key",
+    "description": "Interacting with the red door up close while carrying the red key must open it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.RedKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.RedDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.RedDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "blue_opens_with_key",
+    "description": "Interacting with the blue door up close while carrying the blue key must open it.",
+    "violation": {
+      "after": [
+        {
+          "and": [
+            {
+              "did": "interact"
+            },
+            {
+              "==": [
+                {
+                  "var": "ActorStates.BlueKey"
+                },
+                null
+              ]
+            },
+            {
+              "<": [
+                {
+                  "dist": [
+                    "PlayerLocation",
+                    "ActorLocations.BlueDoor"
+                  ]
+                },
+                150
+              ]
+            }
+          ]
+        },
+        {
+          "==": [
+            {
+              "var": "ActorStates.BlueDoor"
+            },
+            "closed"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "door_needs_own_key",
+    "description": "A door opens only if the player is carrying the key of the same color; a key opens only its own color.",
+    "violation": {
+      "ever": {
+        "or": [
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.GreenDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GreenDoor"
+                  },
+                  "open"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GreenKey"
+                  },
+                  "present"
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.RedDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.RedDoor"
+                  },
+                  "open"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.RedKey"
+                  },
+                  "present"
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.BlueDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.BlueDoor"
+                  },
+                  "open"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.BlueKey"
+                  },
+                  "present"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "door_stays_shut_without_key",
+    "description": "Interacting with a door without its own key leaves it shut.",
+    "violation": {
+      "ever": {
+        "or": [
+          {
+            "and": [
+              {
+                "did": "interact"
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GreenKey"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "dist": [
+                      "PlayerLocation",
+                      "ActorLocations.GreenDoor"
+                    ]
+                  },
+                  150
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.GreenDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GreenDoor"
+                  },
+                  "open"
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "did": "interact"
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.RedKey"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "dist": [
+                      "PlayerLocation",
+                      "ActorLocations.RedDoor"
+                    ]
+                  },
+                  150
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.RedDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.RedDoor"
+                  },
+                  "open"
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "did": "interact"
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.BlueKey"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "<": [
+                  {
+                    "dist": [
+                      "PlayerLocation",
+                      "ActorLocations.BlueDoor"
+                    ]
+                  },
+                  150
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.BlueDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.BlueDoor"
+                  },
+                  "open"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "door_needs_interact_close",
+    "description": "A door opens only when the player stands next to it and interacts with it.",
+    "violation": {
+      "ever": {
+        "or": [
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.GreenDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GreenDoor"
+                  },
+                  "open"
+                ]
+              },
+              {
+                "not": {
+                  "and": [
+                    {
+                      "did": "interact"
+                    },
+                    {
+                      "<": [
+                        {
+                          "dist": [
+                            "PlayerLocation",
+                            "ActorLocations.GreenDoor"
+                          ]
+                        },
+                        150
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.RedDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.RedDoor"
+                  },
+                  "open"
+                ]
+              },
+              {
+                "not": {
+                  "and": [
+                    {
+                      "did": "interact"
+                    },
+                    {
+                      "<": [
+                        {
+                          "dist": [
+                            "PlayerLocation",
+                            "ActorLocations.RedDoor"
+                          ]
+                        },
+                        150
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.BlueDoor"
+                  },
+                  "closed"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.BlueDoor"
+                  },
+                  "open"
+                ]
+              },
+              {
+                "not": {
+                  "and": [
+                    {
+                      "did": "interact"
+                    },
+                    {
+                      "<": [
+                        {
+                          "dist": [
+                            "PlayerLocation",
+                            "ActorLocations.BlueDoor"
+                          ]
+                        },
+                        150
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "key_not_loot",
+    "description": "Keys are not loot and do not change the inventory count.",
+    "violation": {
+      "ever": {
+        "or": [
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.GreenKey"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.GreenKey"
+                  },
+                  null
+                ]
+              },
+              {
+                "!=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.RedKey"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.RedKey"
+                  },
+                  null
+                ]
+              },
+              {
+                "!=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "and": [
+              {
+                "==": [
+                  {
+                    "prev": "ActorStates.BlueKey"
+                  },
+                  "present"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "var": "ActorStates.BlueKey"
+                  },
+                  null
+                ]
+              },
+              {
+                "!=": [
+                  {
+                    "-": [
+                      {
+                        "var": "InventoryCount"
+                      },
+                      {
+                        "prev": "InventoryCount"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "coin_worth_one",
+    "description": "A coin is worth 1.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.Coin"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.Coin"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              1
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gem_worth_three",
+    "description": "A gem bundle is worth 3.",
+    "violation": {
+      "ever": {
+        "and": [
+          {
+            "==": [
+              {
+                "prev": "ActorStates.GemBundle"
+              },
+              "present"
+            ]
+          },
+          {
+            "==": [
+              {
+                "var": "ActorStates.GemBundle"
+              },
+              null
+            ]
+          },
+          {
+            "!=": [
+              {
+                "-": [
+                  {
+                    "var": "InventoryCount"
+                  },
+                  {
+                    "prev": "InventoryCount"
+                  }
+                ]
+              },
+              3
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

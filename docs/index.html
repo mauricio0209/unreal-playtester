@@ -1,0 +1,215 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Playtest report</title><style>
+:root{--bg:#0f1115;--card:#181b22;--fg:#e8eaf0;--mute:#9aa1b2;--ok:#e5484d;--no:#5b6170;
+--flaky:#f5a524;--accent:#7c9cff}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.5 system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:32px 16px}
+h1{font-size:30px;margin:0 0 4px}h2{margin:40px 0 12px;font-size:22px}
+.meta{color:var(--mute)}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}
+.stat{background:var(--card);border-radius:10px;padding:12px 18px}
+.stat b{display:block;font-size:26px}
+.finding{background:var(--card);border-radius:12px;padding:20px 24px;margin:16px 0;
+border-left:6px solid var(--no)}
+.finding.confirmed{border-left-color:var(--ok)}.finding.flaky{border-left-color:var(--flaky)}
+.badge{font-weight:600;color:var(--mute)}.confirmed .badge{color:var(--ok)}
+.flaky .badge{color:var(--flaky)}h3{margin:6px 0 12px;font-size:21px}
+.label{margin:14px 0 4px;color:var(--mute);font-size:13px;text-transform:uppercase;
+letter-spacing:.06em}
+blockquote{margin:0;padding:8px 14px;border-left:3px solid var(--accent);font-style:italic}
+code,pre{font-family:ui-monospace,Consolas,monospace}pre{background:#0b0d11;padding:12px;
+border-radius:8px;overflow:auto;font-size:13px}summary{cursor:pointer;color:var(--accent)}
+video,img{max-width:100%;border-radius:8px;margin-top:12px}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+figure{margin:0}figcaption{color:var(--mute);font-size:13px}
+</style></head><body><main><p class="meta">A real session of <a style="color:var(--accent)" href="https://github.com/mauricio0209/unreal-playtester">Unreal AI Playtester</a> on the Vault level, agent at tag <code>agent-freeze</code>. All <a style="color:var(--accent)" href="checks.json">checks</a> were written by Muse Spark from the level&#39;s design document.</p><h1>Playtest report: Vault</h1><p class="meta">muse-spark-1.3-contributor · 2026-11-01T18:57:00.385449</p><div class="stats"><div class="stat"><b>3</b>Confirmed bugs</div><div class="stat"><b>0</b>Rejected hypotheses</div><div class="stat"><b>10</b>Checks written</div><div class="stat"><b>87</b>Actions</div><div class="stat"><b>14.3</b>Minutes</div><div class="stat"><b>$0.3143</b>Cost</div></div><h2>Confirmed bugs</h2><section class="finding confirmed">
+<div class="badge">Confirmed: 3/3 replays reproduced it</div>
+<h3>Gem bundle gave only 1 instead of 3</h3>
+<p class="label">Design document</p><blockquote>Loot is collected by walking over it and adds to the inventory count: a gem bundle is worth 3.</blockquote>
+<p class="label">Check written by the model</p><p><code>gem_worth_three</code>: A gem bundle is worth 3.</p>
+<details><summary>Check JSON</summary><pre>{
+ &quot;ever&quot;: {
+  &quot;and&quot;: [
+   {
+    &quot;==&quot;: [
+     {
+      &quot;prev&quot;: &quot;ActorStates.GemBundle&quot;
+     },
+     &quot;present&quot;
+    ]
+   },
+   {
+    &quot;==&quot;: [
+     {
+      &quot;var&quot;: &quot;ActorStates.GemBundle&quot;
+     },
+     null
+    ]
+   },
+   {
+    &quot;!=&quot;: [
+     {
+      &quot;-&quot;: [
+       {
+        &quot;var&quot;: &quot;InventoryCount&quot;
+       },
+       {
+        &quot;prev&quot;: &quot;InventoryCount&quot;
+       }
+      ]
+     },
+     3
+    ]
+   }
+  ]
+ }
+}</pre></details>
+<p class="label">What the explorer saw</p><p>Coin pickup 0-&gt;1 correct, then GemBundle present-&gt;missing changed inventory 1-&gt;2 delta 1 not 3, violating worth 3</p>
+<p class="label">Repro, from a fresh level load</p><ol><li>Let the game run for 0.5 s</li><li>Walk to (1000, 500)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 3.0 s</li><li>Walk to (2000, 300)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 2.0 s</li></ol>
+<video src="videos/bug1.mp4" controls muted loop></video>
+<div class="shots"><figure><img src="shots/t004_reset.png" alt="before"><figcaption>before</figcaption></figure><figure><img src="shots/t008.png" alt="after"><figcaption>after</figcaption></figure></div>
+</section><section class="finding confirmed">
+<div class="badge">Confirmed: 3/3 replays reproduced it</div>
+<h3>Red door stayed closed with red key</h3>
+<p class="label">Design document</p><blockquote>Every door starts closed and locked. To open a door the player stands next to it and interacts with it. A door opens only if the player is carrying the key of the same color; otherwise it stays shut. A key opens only the door of its own color. The blue door is the heavy door to the treasure room.</blockquote>
+<p class="label">Check written by the model</p><p><code>red_opens_with_key</code>: Interacting with the red door up close while carrying the red key must open it.</p>
+<details><summary>Check JSON</summary><pre>{
+ &quot;after&quot;: [
+  {
+   &quot;and&quot;: [
+    {
+     &quot;did&quot;: &quot;interact&quot;
+    },
+    {
+     &quot;==&quot;: [
+      {
+       &quot;var&quot;: &quot;ActorStates.RedKey&quot;
+      },
+      null
+     ]
+    },
+    {
+     &quot;&lt;&quot;: [
+      {
+       &quot;dist&quot;: [
+        &quot;PlayerLocation&quot;,
+        &quot;ActorLocations.RedDoor&quot;
+       ]
+      },
+      150
+     ]
+    }
+   ]
+  },
+  {
+   &quot;==&quot;: [
+    {
+     &quot;var&quot;: &quot;ActorStates.RedDoor&quot;
+    },
+    &quot;closed&quot;
+   ]
+  }
+ ]
+}</pre></details>
+<p class="label">What the explorer saw</p><p>Picked up RedKey then walked to RedDoor within 44cm and interacted, but state shows RedDoor still closed and image shows blank wall/door not opened</p>
+<p class="label">Repro, from a fresh level load</p><ol><li>Walk to (1500, 300)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 3.0 s</li><li>Walk to (2200, -700)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 3.0 s</li><li>Press Interact</li><li>Let the game run for 0.5 s</li></ol>
+<video src="videos/bug2.mp4" controls muted loop></video>
+<div class="shots"><figure><img src="shots/t008_reset.png" alt="before"><figcaption>before</figcaption></figure><figure><img src="shots/t012.png" alt="after"><figcaption>after</figcaption></figure></div>
+</section><section class="finding confirmed">
+<div class="badge">Confirmed: 3/3 replays reproduced it</div>
+<h3>Red door opened without red key (green key carried)</h3>
+<p class="label">Design document</p><blockquote>Every door starts closed and locked. To open a door the player stands next to it and interacts with it. A door opens only if the player is carrying the key of the same color; otherwise it stays shut. A key opens only the door of its own color. The blue door is the heavy door to the treasure room.</blockquote>
+<p class="label">Check written by the model</p><p><code>door_needs_own_key</code>: A door opens only if the player is carrying the key of the same color; a key opens only its own color.</p>
+<details><summary>Check JSON</summary><pre>{
+ &quot;ever&quot;: {
+  &quot;or&quot;: [
+   {
+    &quot;and&quot;: [
+     {
+      &quot;==&quot;: [
+       {
+        &quot;prev&quot;: &quot;ActorStates.GreenDoor&quot;
+       },
+       &quot;closed&quot;
+      ]
+     },
+     {
+      &quot;==&quot;: [
+       {
+        &quot;var&quot;: &quot;ActorStates.GreenDoor&quot;
+       },
+       &quot;open&quot;
+      ]
+     },
+     {
+      &quot;==&quot;: [
+       {
+        &quot;var&quot;: &quot;ActorStates.GreenKey&quot;
+       },
+       &quot;present&quot;
+      ]
+     }
+    ]
+   },
+   {
+    &quot;and&quot;: [
+     {
+      &quot;==&quot;: [
+       {
+        &quot;prev&quot;: &quot;ActorStates.RedDoor&quot;
+       },
+       &quot;closed&quot;
+      ]
+     },
+     {
+      &quot;==&quot;: [
+       {
+        &quot;var&quot;: &quot;ActorStates.RedDoor&quot;
+       },
+       &quot;open&quot;
+      ]
+     },
+     {
+      &quot;==&quot;: [
+       {
+        &quot;var&quot;: &quot;ActorStates.RedKey&quot;
+       },
+       &quot;present&quot;
+      ]
+     }
+    ]
+   },
+   {
+    &quot;and&quot;: [
+     {
+      &quot;==&quot;: [
+       {
+        &quot;prev&quot;: &quot;ActorStates.BlueDoor&quot;
+       },
+       &quot;closed&quot;
+      ]
+     },
+     {
+      &quot;==&quot;: [
+       {
+        &quot;var&quot;: &quot;ActorStates.BlueDoor&quot;
+       },
+       &quot;open&quot;
+      ]
+     },
+     {
+      &quot;==&quot;: [
+       {
+        &quot;var&quot;: &quot;ActorStates.BlueKey&quot;
+       },
+       &quot;present&quot;
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}</pre></details>
+<p class="label">What the explorer saw</p><p>At t25 RedDoor closed and RedKey present; after interact at RedDoor location t26 RedDoor open while RedKey still present and GreenKey missing/carried. Door opened without its own key, possibly green key opened red door, violating same-color requirement.</p>
+<p class="label">Repro, from a fresh level load</p><ol><li>Walk to (300, 700)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 2.0 s</li><li>Walk to (1200, -700)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 4.0 s</li><li>Press Interact</li><li>Let the game run for 0.5 s</li><li>Walk to (2200, -700)</li><li>Let the game run for 1.0 s</li><li>Let the game run for 1.0 s</li><li>Let the game run for 3.0 s</li><li>Press Interact</li><li>Let the game run for 0.5 s</li></ol>
+<video src="videos/bug3.mp4" controls muted loop></video>
+<div class="shots"><figure><img src="shots/t021_reset.png" alt="before"><figcaption>before</figcaption></figure><figure><img src="shots/t027.png" alt="after"><figcaption>after</figcaption></figure></div>
+</section><h2>Rejected hypotheses</h2><p>None.</p></main></body></html>
