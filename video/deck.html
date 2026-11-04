@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Demo deck</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap');
+:root{--bg:#0f1115;--card:#181b22;--line:#2a2f3a;--fg:#eef0f5;--mute:#8d94a5;--acc:#7c9cff;--red:#ff5a5f;--green:#3dd68c;--key:#3dd68c;--door:#ff5a5f}
+*{box-sizing:border-box;margin:0}
+html,body{width:1920px;height:1080px;overflow:hidden;font-family:Inter,system-ui,sans-serif;color:var(--fg);background:var(--bg)}
+body.overlay{background:transparent}
+.slide{position:absolute;inset:0;display:none}
+.slide.on{display:block}
+[data-s]{transition:none}
+.hide{opacity:0}
+.dim{opacity:.22}
+.center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px}
+.k{font-size:30px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:500}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none}
+.chip{display:inline-flex;align-items:center;gap:18px;background:rgba(10,12,16,.82);border:2px solid var(--line);border-radius:999px;padding:18px 34px;font-size:38px;font-weight:700}
+.chip.red{border-color:var(--red)}.chip .dot{width:22px;height:22px;border-radius:50%;background:var(--red)}
+.tile{width:380px;height:380px;border-radius:40px;background:var(--card);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px}
+.tile svg{width:150px;height:150px}.tile b{font-size:40px}
+.row{display:flex;align-items:center;gap:50px}
+.arrow{font-size:80px;color:var(--mute)}
+.big{font-size:150px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:32px;padding:44px 52px}
+.hl{background:rgba(124,156,255,.28);box-shadow:0 0 0 6px rgba(124,156,255,.28);border-radius:6px;color:#fff}
+.bar{height:22px;border-radius:11px;background:#262b36;margin:12px 0}
+pre{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-size:34px;line-height:1.55;white-space:pre}
+.stage{width:300px;height:220px;border-radius:30px;background:var(--card);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.stage b{font-size:36px}.stage span{font-size:26px;color:var(--mute)}
+.stage.act{border-color:var(--acc);box-shadow:0 0 0 6px rgba(124,156,255,.25)}
+.stage.act b{color:var(--acc)}
+.meter{width:760px;height:70px;border-radius:35px;background:#262b36;overflow:hidden}
+.meter i{display:block;height:100%}
+.dots{display:flex;gap:22px}.dots i{width:60px;height:60px;border-radius:50%;background:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- hook: chip over the real bug -->
+<div class="slide" id="hook">
+  <div style="position:absolute;left:70px;bottom:70px" data-s="1"><span class="chip red"><span class="dot"></span>A real bug in this level</span></div>
+</div>
+
+<!-- found: chip over the same bug, named -->
+<div class="slide" id="found">
+  <div style="position:absolute;left:70px;bottom:70px" data-s="1"><span class="chip red"><span class="dot"></span>Red door: ignores the red key, opens with the green one</span></div>
+</div>
+
+<!-- manual testing -->
+<div class="slide" id="manual">
+  <div class="center">
+    <div class="k" data-s="1">Today: by hand</div>
+    <div class="row" id="manualrow">
+      <div class="tile" data-s="1"><svg viewBox="0 0 100 100" fill="none" stroke="#eef0f5" stroke-width="5" stroke-linejoin="round"><path d="M25 10h35l15 15v65H25z"/><path d="M60 10v15h15"/><path d="M35 45h30M35 58h30M35 71h20" stroke-linecap="round"/></svg><b>Read the doc</b></div>
+      <div class="arrow" data-s="2">→</div>
+      <div class="tile" data-s="2"><svg viewBox="0 0 100 100" fill="none" stroke="#eef0f5" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><rect x="12" y="32" width="76" height="40" rx="20"/><path d="M32 44v16M24 52h16"/><circle cx="64" cy="48" r="3" fill="#eef0f5"/><circle cx="72" cy="56" r="3" fill="#eef0f5"/></svg><b>Play</b></div>
+      <div class="arrow" data-s="3">→</div>
+      <div class="tile" data-s="3"><svg viewBox="0 0 100 100" fill="none" stroke="#eef0f5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 30l7 7 12-14M20 55l7 7 12-14M20 80l7 7 12-14"/><path d="M50 32h32M50 57h32M50 82h32"/></svg><b>Check each rule</b></div>
+    </div>
+    <div class="big" data-s="4" style="font-size:110px;color:var(--red);position:absolute;bottom:120px">No QA team</div>
+  </div>
+</div>
+
+<!-- title -->
+<div class="slide" id="title">
+  <div class="center">
+    <div class="k" data-s="1">Unreal Engine 5 · Meta Muse Spark</div>
+    <div class="big" data-s="1" style="font-size:140px">Unreal AI Playtester</div>
+    <div data-s="1" style="font-size:44px;color:var(--mute)">reads the rules · plays the level · proves the bugs</div>
+  </div>
+</div>
+
+<!-- design doc to check -->
+<div class="slide" id="doc">
+  <div class="center"><div class="row" style="gap:56px;align-items:center">
+    <div class="panel" data-s="1" style="width:640px">
+      <div class="k mono" style="font-size:24px;margin-bottom:30px">vault.md · design doc</div>
+      <div class="bar" style="width:92%"></div><div class="bar" style="width:78%"></div><div class="bar" style="width:85%;margin-bottom:30px"></div>
+      <p style="font-size:42px;line-height:1.4;font-weight:500"><span id="rule">A door opens only if the player is carrying the key of the same color.</span></p>
+      <div class="bar" style="width:70%;margin-top:30px"></div><div class="bar" style="width:88%"></div><div class="bar" style="width:60%"></div>
+    </div>
+    <div data-s="3" style="width:240px;display:flex;flex-direction:column;align-items:center;gap:16px;white-space:nowrap">
+      <span class="chip" style="font-size:28px;padding:12px 24px;border-color:var(--acc);color:var(--acc)">Muse Spark</span>
+      <div class="arrow" style="font-size:90px;line-height:1">→</div>
+    </div>
+    <div class="panel" data-s="4" style="width:740px">
+      <div class="k mono" style="font-size:24px;margin-bottom:26px;color:var(--acc)">check · door_needs_own_key</div>
+      <pre style="font-size:26px">{"and": [
+  {"==": [{"prev": "RedDoor"}, "closed"]},
+  {"==": [{"var":  "RedDoor"}, "open"]},
+  {"==": [{"var":  "RedKey"},  "present"]}
+]}</pre>
+    </div>
+  </div></div>
+</div>
+
+<!-- interpreter on game state -->
+<div class="slide" id="eval">
+  <div class="center">
+    <div class="row" style="gap:70px">
+      <div class="panel" data-s="2" style="width:560px">
+        <div class="k" style="font-size:26px;margin-bottom:24px">Game state</div>
+        <pre style="font-size:34px">RedDoor  <span style="color:var(--red)">open</span>
+RedKey   <span style="color:var(--green)">present</span>
+GreenKey carried</pre>
+      </div>
+      <div class="arrow" data-s="2">→</div>
+      <div class="panel" data-s="1" style="width:470px;text-align:center">
+        <div class="k" style="font-size:26px;margin-bottom:20px">Check (JSON)</div>
+        <div class="mono" style="font-size:32px;color:var(--acc)">door_needs_own_key</div>
+        <div style="font-size:28px;color:var(--mute);margin-top:20px">evaluated by a plain interpreter</div>
+      </div>
+      <div class="arrow" data-s="3">→</div>
+      <div data-s="3" style="width:260px;height:260px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;box-shadow:0 0 80px rgba(255,90,95,.6)">BUG</div>
+    </div>
+    <span class="chip" data-s="1" style="font-size:32px;position:absolute;bottom:130px">No model-written code ever runs</span>
+  </div>
+</div>
+
+<!-- pipeline -->
+<div class="slide" id="pipeline">
+  <div class="center">
+    <div class="row" style="gap:26px">
+      <div class="stage" data-p="1"><b>Design doc</b><span>plain English</span></div><div class="arrow" style="font-size:54px">→</div>
+      <div class="stage" data-p="2"><b>Checks</b><span>Muse Spark writes</span></div><div class="arrow" style="font-size:54px">→</div>
+      <div class="stage" data-p="3"><b>Play</b><span>Muse Spark explores</span></div><div class="arrow" style="font-size:54px">→</div>
+      <div class="stage" data-p="4"><b>Verify</b><span>no AI · 3 replays</span></div><div class="arrow" style="font-size:54px">→</div>
+      <div class="stage" data-p="5"><b>Report</b><span>proven bugs only</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- what the model sees: overlay on a screenshot -->
+<div class="slide" id="sees">
+  <div style="position:absolute;left:70px;top:70px" data-s="1"><span class="chip">Screenshot</span></div>
+  <div class="panel" data-s="1" style="position:absolute;right:70px;top:70px;bottom:70px;width:560px;background:rgba(15,17,21,.9)">
+    <div class="k" style="font-size:26px;margin-bottom:26px">+ Game state</div>
+    <pre style="font-size:30px;line-height:1.7">RedDoor    closed
+GreenDoor  closed
+BlueDoor   closed
+GreenKey   present
+RedKey     present
+BlueKey    present
+GemBundle  present
+Inventory  0</pre>
+  </div>
+</div>
+
+<!-- one turn of the session: caption over its screenshot -->
+<div class="slide" id="turn">
+  <div style="position:absolute;left:70px;top:70px;display:flex;flex-direction:column;gap:22px;align-items:flex-start">
+    <span class="chip" id="turntext"></span>
+    <span class="chip mono" id="turnrule" style="font-size:30px;border-color:var(--acc);color:var(--acc)"></span>
+  </div>
+</div>
+
+<!-- a plan -->
+<div class="slide" id="plan">
+  <div class="center">
+    <div class="k" data-s="1">The bug needs a plan</div>
+    <div class="row" style="gap:60px">
+      <div class="tile" data-s="1"><svg viewBox="0 0 100 100" fill="none" stroke="var(--key)" stroke-width="7" stroke-linecap="round"><circle cx="30" cy="50" r="16"/><path d="M46 50h40M74 50v14M86 50v10"/></svg><b>Green key</b></div>
+      <div class="arrow" data-s="2">→</div>
+      <div class="tile" data-s="2" id="doortile"><svg viewBox="0 0 100 100" fill="none" stroke="var(--door)" stroke-width="7" stroke-linejoin="round"><rect x="26" y="12" width="48" height="80" rx="4"/><circle cx="62" cy="54" r="4" fill="var(--door)"/></svg><b>Red door</b></div>
+      <div class="arrow" data-s="3">→</div>
+      <div data-s="3" style="width:300px;height:300px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:58px;font-weight:800;text-align:center;line-height:1.1;box-shadow:0 0 80px rgba(255,90,95,.6)">It<br>opens</div>
+    </div>
+  </div>
+</div>
+
+<!-- three replays: overlay aligned with the tiles drawn by ffmpeg -->
+<div class="slide" id="tiles">
+  <div class="k" data-s="1" style="position:absolute;top:200px;width:100%;text-align:center">Fresh level load · same actions · no AI</div>
+  <div data-s="1" style="position:absolute;top:330px;left:40px;width:600px;text-align:center;font-size:36px;font-weight:700">Replay 1</div>
+  <div data-s="1" style="position:absolute;top:330px;left:660px;width:600px;text-align:center;font-size:36px;font-weight:700">Replay 2</div>
+  <div data-s="1" style="position:absolute;top:330px;left:1280px;width:600px;text-align:center;font-size:36px;font-weight:700">Replay 3</div>
+  <div data-s="2" style="position:absolute;top:770px;left:40px;width:600px;text-align:center"><span class="chip" style="border-color:var(--green);color:var(--green)">✓ bug</span></div>
+  <div data-s="2" style="position:absolute;top:770px;left:660px;width:600px;text-align:center"><span class="chip" style="border-color:var(--green);color:var(--green)">✓ bug</span></div>
+  <div data-s="2" style="position:absolute;top:770px;left:1280px;width:600px;text-align:center"><span class="chip" style="border-color:var(--green);color:var(--green)">✓ bug</span></div>
+  <div data-s="2" style="position:absolute;top:900px;width:100%;text-align:center;font-size:56px;font-weight:800;color:var(--green)">Confirmed 3/3</div>
+</div>
+
+<!-- out of reach -->
+<div class="slide" id="reach">
+  <div class="k" style="position:absolute;top:110px;width:100%;text-align:center" data-s="1">A hypothesis the replay rejected</div>
+  <svg viewBox="0 0 1920 1080" style="position:absolute;inset:0">
+    <g data-s="2"><circle cx="760" cy="560" r="300" fill="rgba(124,156,255,.08)" stroke="var(--acc)" stroke-width="4" stroke-dasharray="14 12"/>
+      <text x="760" y="230" fill="#7c9cff" font-size="34" text-anchor="middle" font-family="Inter">interact reach 150 cm</text></g>
+    <g data-s="1"><rect x="730" y="470" width="60" height="180" rx="8" fill="var(--door)"/>
+      <text x="760" y="700" fill="#eef0f5" font-size="34" text-anchor="middle" font-family="Inter" font-weight="700">Red door</text>
+      <circle cx="1100" cy="560" r="30" fill="#eef0f5"/>
+      <text x="1100" y="640" fill="#eef0f5" font-size="34" text-anchor="middle" font-family="Inter" font-weight="700">Player</text>
+      <text x="1290" y="470" fill="#eef0f5" font-size="40" font-family="Inter">“The door won’t open”</text></g>
+    <g data-s="2"><line x1="795" y1="560" x2="1065" y2="560" stroke="#eef0f5" stroke-width="4" stroke-dasharray="10 8"/>
+      <text x="930" y="540" fill="#eef0f5" font-size="40" text-anchor="middle" font-family="JetBrains Mono">160 cm</text></g>
+  </svg>
+  <div data-s="3" style="position:absolute;right:220px;bottom:180px;transform:rotate(-8deg);border:8px solid var(--red);color:var(--red);font-size:96px;font-weight:800;padding:10px 40px;border-radius:20px">REJECTED</div>
+</div>
+
+<!-- AI vs scripted bot -->
+<div class="slide" id="versus">
+  <div class="k" style="position:absolute;top:150px;width:100%;text-align:center" data-s="1">Vault · red door bug · 6 sessions each</div>
+  <div style="position:absolute;left:0;right:0;top:300px;display:grid;grid-template-columns:760px 760px;grid-template-rows:90px 70px 70px 190px;column-gap:140px;row-gap:26px;justify-content:center;align-items:center">
+    <div data-s="1" style="font-size:64px;font-weight:800;color:var(--acc)">Muse Spark</div>
+    <div data-s="1" style="font-size:64px;font-weight:800">Scripted bot</div>
+    <div></div>
+    <div data-s="2" style="display:flex;gap:18px"><span class="chip" style="font-size:28px;padding:10px 24px">same checks</span><span class="chip" style="font-size:28px;padding:10px 24px">same sweep</span></div>
+    <div data-s="3" class="meter"><i style="width:100%;background:var(--green)"></i></div>
+    <div data-s="4" class="meter"><i style="width:0"></i></div>
+    <div data-s="3" class="big" style="font-size:150px">6/6</div>
+    <div data-s="4" class="big" style="font-size:150px;color:var(--red)">0/6</div>
+  </div>
+</div>
+
+<!-- held-out level -->
+<div class="slide" id="armory">
+  <div class="center" style="gap:60px">
+    <div data-s="1" style="text-align:center"><div class="k">Held-out level · agent frozen</div><div class="big" style="margin-top:24px">The Armory</div></div>
+    <div data-s="2" style="display:flex;flex-direction:column;gap:22px;align-items:center">
+      <div style="font-size:38px;color:var(--acc);font-weight:700;margin-bottom:10px">Muse Spark Open · open weights · Baseten</div>
+      <div class="row" style="gap:70px">
+        <div style="text-align:center"><div class="dots"><i></i><i></i><i></i></div><div style="font-size:26px;color:var(--mute);margin-top:12px">session 1</div></div>
+        <div style="text-align:center"><div class="dots"><i></i><i></i><i></i></div><div style="font-size:26px;color:var(--mute);margin-top:12px">session 2</div></div>
+        <div style="text-align:center"><div class="dots"><i></i><i></i><i></i></div><div style="font-size:26px;color:var(--mute);margin-top:12px">session 3</div></div>
+        <div style="text-align:center"><div class="dots"><i></i><i></i><i></i></div><div style="font-size:26px;color:var(--mute);margin-top:12px">session 4</div></div>
+      </div>
+    </div>
+    <div data-s="3"><span class="chip" style="font-size:44px">&lt; $0.40 per session</span></div>
+  </div>
+</div>
+
+<!-- limits -->
+<div class="slide" id="limits">
+  <div class="center" style="gap:70px">
+    <div class="k" data-s="1">Not perfect</div>
+    <div class="row" style="gap:120px" data-s="2">
+      <div style="text-align:center"><div class="big">2–3</div><div style="font-size:34px;color:var(--mute);margin-top:18px">bugs per session</div></div>
+      <div style="text-align:center"><div class="big" style="color:var(--red)">2<span style="color:var(--mute);font-size:90px"> / 34</span></div><div style="font-size:34px;color:var(--mute);margin-top:18px">runs with a wrong check</div></div>
+    </div>
+    <div data-s="3"><span class="chip mono" style="font-size:34px">github.com/mauricio0209/unreal-playtester/runs</span></div>
+  </div>
+</div>
+
+<!-- built during the hackathon -->
+<div class="slide" id="built">
+  <div class="center" style="gap:60px">
+    <div class="k" data-s="1">Built during the hackathon</div>
+    <div class="big" data-s="1" style="font-size:120px">Oct 30 → Nov 4</div>
+    <div class="row" style="gap:24px" data-s="1"><span class="chip">Levels</span><span class="chip">Agent</span><span class="chip">Verifier</span><span class="chip" data-s="2" style="border-color:var(--acc);color:var(--acc)">+ Muse Code</span></div>
+  </div>
+</div>
+
+<!-- end -->
+<div class="slide" id="end">
+  <div class="center" style="gap:30px">
+    <div class="big" data-s="1" style="font-size:110px">A designer writes the rules.</div>
+    <div class="big" data-s="2" style="font-size:110px;color:var(--acc)">The AI tests them.</div>
+    <div data-s="2" class="mono" style="font-size:36px;margin-top:70px">github.com/mauricio0209/unreal-playtester</div>
+    <div data-s="2" style="font-size:24px;color:#5d6475;position:absolute;bottom:50px">Narration: AI voice (ElevenLabs via OpenRouter)</div>
+  </div>
+</div>
+
+<script>
+// ?slide=<id>&step=<n>[&overlay=1][&text=..][&rule=..][&bug=1]
+const q = new URLSearchParams(location.search);
+const slide = document.getElementById(q.get("slide"));
+const step = +q.get("step") || 1;
+if (q.get("overlay")) { document.body.classList.add("overlay"); document.documentElement.style.background = "transparent"; }
+slide.classList.add("on");
+slide.querySelectorAll("[data-s]").forEach(el => { if (+el.dataset.s > step) el.classList.add("hide"); });
+slide.querySelectorAll("[data-p]").forEach(el => {
+  const p = +el.dataset.p;
+  if (p === step) el.classList.add("act"); else if (p > step) el.classList.add("dim");
+});
+if (slide.id === "manual" && step >= 4) document.getElementById("manualrow").classList.add("dim");
+if (slide.id === "turn") {
+  const t = document.getElementById("turntext"), r = document.getElementById("turnrule");
+  t.textContent = q.get("text") || "";
+  if (q.get("bug")) { t.classList.add("red"); t.insertAdjacentHTML("afterbegin", '<span class="dot"></span>'); }
+  if (q.get("rule")) r.textContent = "testing: " + q.get("rule"); else r.remove();
+}
+</script>
+</body>
+</html>

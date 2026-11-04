@@ -2,6 +2,12 @@
 
 An autonomous playtesting agent for Unreal Engine 5.8, powered by Meta's Muse models.
 
+[![Watch the 3-minute demo](docs/demo.png)](https://youtu.be/95SwQI5UQwA)
+
+**[▶ Demo video (2:41)](https://youtu.be/95SwQI5UQwA)** ·
+**[Live report from a real session](https://mauricio0209.github.io/unreal-playtester/)** ·
+**[Results](#results)** · **[Run it](#run-it)**
+
 Give it a level and the level's **design document in plain English**. Muse Spark reads the
 document and writes its own checks for every rule, plays the level from screenshots and game
 state, and files the bugs it finds. A deterministic verifier with **no LLM** confirms each one
@@ -144,6 +150,9 @@ The verifier proves that a bug reproduces, not that the model's check is right. 
 
 ## Run it
 
+Requirements: Unreal Engine 5.8, Python 3.14 (standard library only, no packages to install),
+`ffmpeg` for the replay videos, and a Meta Model API key (a Baseten key for Muse Spark Open).
+
 ```bash
 cp .env.example .env   # META_API_KEY, BASETEN_API_KEY
 ```
@@ -225,6 +234,9 @@ version in English.
   check nothing regressed, and the agent was frozen.
 - **Oct 31, two editors.** A second editor instance on a project copy, started and driven
   through its own MCP server, runs benchmarks in parallel.
+- **Nov 1, report and demo.** An HTML report shows each bug next to the design rule it breaks
+  and the check that caught it; one real Vault session is published on GitHub Pages. The demo
+  video is built from code (`video/`): a storyboard, HTML diagrams and real session footage.
 
 ## Repository layout
 
@@ -234,3 +246,10 @@ version in English.
 - `scripts/`: benchmark runner, second editor instance, MCP client, graders, Muse Code lanes.
 - `tasks/`: the prompts given to Muse Code for each delegated module.
 - `unreal/PlaytestArena/`: UE 5.8 project with the three levels and `BP_TestHarness`.
+- `runs/`: every benchmark session behind the results tables.
+- `docs/`: the live report published on GitHub Pages.
+- `video/`: storyboard, diagrams and build script for the demo video.
+
+## License
+
+[MIT](LICENSE)

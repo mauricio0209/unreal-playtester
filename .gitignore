@@ -10,3 +10,9 @@ Binaries/
 Intermediate/
 Saved/
 DerivedDataCache/
+# voice samples, not for the repo
+video/samples/
+video/build/
+video/out/
+# browser automation logs
+.playwright-mcp/
